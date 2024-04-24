@@ -1,24 +1,22 @@
-# elec-vue
+# 지구하다 kiosk
 
-## Project setup
-```
-yarn install
-```
+## 설치 및 버전 정보
+node.js v16.13.1
+vue3 + eslint
+electron ^13.0.0
 
-### Compiles and hot-reloads for development
+### Vue 설치 및 프로젝트 생성
 ```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
+npm i -g @vue/cli
+npx vue create elec-vue
 ```
 
-### Lints and fixes files
+### Electron 설치
 ```
-yarn lint
+npx vue add electron-builder
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Electron 실행
+```
+yarn electron:serve
+```
