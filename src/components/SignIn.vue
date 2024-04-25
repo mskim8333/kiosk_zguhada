@@ -4,23 +4,23 @@
     <div class="ip_row">
       <span>토큰</span>
       <div>
-        <input v-model="token" placeholder="토큰값을 입력해주세요.">
+        <input v-model="token" maxlength="15" placeholder="토큰값을 입력해주세요.">
       </div>
     </div>
     <div class="ip_row">
       <span>아이디</span>
       <div>
-        <input v-model="id" placeholder="아이디를 입력해주세요.">
+        <input v-model="id" maxlength="15" placeholder="아이디를 입력해주세요.">
       </div>
     </div>
     <div class="ip_row">
       <span>비밀번호</span>
       <div>
-        <input v-model="pass" placeholder="비밀번호를 입력해주세요.">
+        <input type="password" maxlength="15" v-model="pass" placeholder="비밀번호를 입력해주세요.">
       </div>
     </div>
     <div class="btn_wrap">
-      <button class="btn">로그인</button>
+      <button class="btn" @click="val_ck()">로그인</button>
     </div>
     <div class="info">
       <div class="bline">기기 고장 및 AS/사용법 문의</div>
@@ -34,6 +34,32 @@ export default {
   name: 'SignIn',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      ck_token : false,
+      ck_id : false,
+      ck_pass : false,
+      token: '',
+      id: '',
+      pass: '',
+    }
+  },
+  methods: {
+    val_ck() {
+      if (!this.token) {
+        alert("토큰을 입력해주세요!");
+        return false;
+      }
+      if (!this.id) {
+        alert("아이디를 입력해주세요!");
+        return false;
+      }
+      if (!this.pass) {
+        alert("비밀번호를 입력해주세요!");
+        return false;
+      }
+    }
   }
 }
 </script>
@@ -67,6 +93,7 @@ img.logo {
 .ip_row span {
   float: left;
   width: 20%;
+  height: 36px;
   padding: 10px 0;
   font-size: 20px;
   text-align: left;
@@ -85,8 +112,23 @@ img.logo {
   color: #767676;
   outline: none;
 }
+.ip_row div input[type=password] {
+  width: 100%;
+  padding: 0px 10px 4px;
+  border: 0px;
+  font-size: 36px;
+  color: #2C2C2C;
+  letter-spacing: 5px;
+  outline: none;
+}
 .ip_row div input::placeholder {
   color: #B4B4B4;
+}
+.ip_row div input[type=password]::placeholder {
+  color: #B4B4B4;
+  font-size: 20px;
+  letter-spacing: 0px;
+  vertical-align: middle;
 }
 .btn_wrap {
   margin: 60px 26px;
