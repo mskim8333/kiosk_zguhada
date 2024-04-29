@@ -1,24 +1,40 @@
 <template>
-  <SignIn msg="Welcome to Your Vue.js App"/>
+  <TempPage msg="Welcome to Your Vue.js App"/>
+  <!--<ProcPage msg="Welcome to Your Vue.js App"/>-->
+  <!--<MainPage msg="Welcome to Your Vue.js App"/>-->
+  <!--<SignIn msg="Welcome to Your Vue.js App"/>-->
 </template>
 
 <script>
-import SignIn from './components/SignIn.vue'
+//import SignIn from './components/SignIn.vue'
+//import MainPage from './components/MainPage.vue'
+//import ProcPage from './components/ProcPage.vue'
+import TempPage from './components/TempPage.vue'
 
 export default {
   name: 'App',
   components: {
-    SignIn
+    //SignIn,
+    //MainPage,
+    //ProcPage,
+    TempPage,
   }
 }
 </script>
 
 <style>
+html, body {
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+}
 #app {
   font-family: Pretendard, sans-serif;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
 }
 .v-application {
   font-family: 'Pretendard', sans-serif !important;
