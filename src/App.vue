@@ -1,15 +1,23 @@
 <template>
-  <TempPage msg="Welcome to Your Vue.js App"/>
+  <!--<TempPage msg="Welcome to Your Vue.js App"/>-->
   <!--<ProcPage msg="Welcome to Your Vue.js App"/>-->
   <!--<MainPage msg="Welcome to Your Vue.js App"/>-->
   <!--<SignIn msg="Welcome to Your Vue.js App"/>-->
+  <!--<AddrPage />-->
+  <!--<ItemPage />-->
+  <!--<UserPage />-->
+  <UserPage2 />
 </template>
 
 <script>
 //import SignIn from './components/SignIn.vue'
 //import MainPage from './components/MainPage.vue'
 //import ProcPage from './components/ProcPage.vue'
-import TempPage from './components/TempPage.vue'
+//import TempPage from './components/TempPage.vue'
+//import AddrPage from './components/AddrPage.vue'
+//import ItemPage from './components/ItemPage.vue'
+//import UserPage from './components/UserPage.vue'
+import UserPage2 from './components/UserPage2.vue'
 
 export default {
   name: 'App',
@@ -17,7 +25,11 @@ export default {
     //SignIn,
     //MainPage,
     //ProcPage,
-    TempPage,
+    //TempPage,
+    //AddrPage,
+    //ItemPage,
+    //UserPage,
+    UserPage2,
   }
 }
 </script>
