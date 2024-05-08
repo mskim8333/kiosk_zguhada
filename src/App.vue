@@ -5,8 +5,10 @@
   <!--<SignIn msg="Welcome to Your Vue.js App"/>-->
   <!--<AddrPage />-->
   <!--<ItemPage />-->
+  <!--<UserPage2 />-->
   <!--<UserPage />-->
-  <UserPage2 />
+  <!--<SelPage />-->
+  <OrderPage />
 </template>
 
 <script>
@@ -16,8 +18,10 @@
 //import TempPage from './components/TempPage.vue'
 //import AddrPage from './components/AddrPage.vue'
 //import ItemPage from './components/ItemPage.vue'
-//import UserPage from './components/UserPage.vue'
-import UserPage2 from './components/UserPage2.vue'
+//import UserPage2 from './components/UserPage.vue'
+//import UserPage from './components/UserPage2.vue'
+//import SelPage from './components/SelPage.vue'
+import OrderPage from './components/OrderPage.vue'
 
 export default {
   name: 'App',
@@ -28,8 +32,9 @@ export default {
     //TempPage,
     //AddrPage,
     //ItemPage,
-    //UserPage,
-    UserPage2,
+    //UserPage2,
+    //UserPage, 
+    OrderPage
   }
 }
 </script>
