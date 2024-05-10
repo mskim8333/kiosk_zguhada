@@ -5,11 +5,14 @@
         <img class="top_btn" alt="logo" src="../assets/home.png">
       </router-link>
     </div>
-    <h5>대형생활폐기물 배출을 위해</h5>
+    <h5>대형생활폐기물 배출을 위해1111</h5>
     <h3>배출하실 주소를 입력해주세요.</h3>
     <div class="ip_row">
       <div>
         <input v-model="addr" maxlength="15" placeholder="주소를 입력해주세요.">
+      </div>
+      <div class="mt10">
+        <input v-model="addr2" maxlength="15" placeholder="상세주소를 입력해주세요.">
       </div>
     </div>
     <div class="keyboard">
@@ -59,37 +62,53 @@
         </button>
       </div>
     </div>
-
     <div class="bottom_content">
       <div class="icon_row">
         <span class="tip">Tip</span>
       </div>
       <div class="info_txt">
-        아래와 같은 조합으로 검색을 하시면 더욱 정확한 결과가 검색됩니다.
+        주소를 잘못 입력하신 경우 수거가 진행되지 않습니다.<br />배출하시는 장소를 상세히 입력해주세요.
       </div>
       <div class="info_box">
         <div class="info_row">
-          · 도로명 + 건물명
-          <span>예)서초대로</span>
-        </div>
-        <div class="info_row">
-          · 동/읍/면/리 + 번지
-          <span>예)성수동 999-999</span>
-        </div>
-        <div class="info_row">
-          · 건물명/아파트명
-          <span>예)성수한라시트마벨리</span>
+          <span>예) 00아파트 101동 입구 앞</span>
         </div>
       </div>
       <div class="btn_wrap">
-        <router-link class="btn" to="/addr2">임시 다음페이지 이동</router-link>
+        <router-link class="btn" to="/">완료</router-link>
       </div>
     </div>
-    
   </div>
 </template>
 
 <style scoped>
+.addr_wrap {
+  display: block;
+  margin: 20px 40px 20px;
+}
+.addr_box {
+  border: 1px solid #E4E4E4;
+  border-radius: 10px;
+  padding: 10px 25px;
+  margin: 8px 0px;
+}
+.addr_row {
+  display: block;
+  text-align: left;
+  line-height: 20px;
+}
+.addr_row span {
+  display: inline-block;
+  color: #1E64FF;
+  border: 1px solid #C6DEFF;
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+.addr_row p {
+  display: inline-block;
+  color: #767676;
+  margin-left: 10px;
+}
 .bottom_content {
   position: fixed;
   bottom: 20px;
@@ -246,6 +265,24 @@ h3 {
   color: #767676;
   outline: none;
 }
+.btn_wrap {
+  margin: 10px 26px;
+}
+.btn {
+  text-decoration: none;
+  display:block;
+  background-color: #1E64FF;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 20px;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  border: 0px;
+}
+.mt10 {
+  margin-top: 10px;
+}
 </style>
 
 <script>
@@ -256,7 +293,8 @@ export default {
   },
   data() {
     return {
-      addr: '',
+      addr: '서울시 성동구 성수일로 12길 4',
+      addr2: '',
       inputText: '', // 사용자가 입력한 텍스트
       chosungIndex: ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"],
       jongsungIndex: ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"],

@@ -2,6 +2,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import MainPage from '../components/MainPage.vue'; // 예시로 MainPage 컴포넌트를 import
 import AddrPage from '../components/AddrPage.vue';
+import AddrPage2 from '../components/AddrPage2.vue';
+import AddrPage3 from '../components/AddrPage3.vue';
 import ItemPage from '../components/ItemPage.vue';
 import OrderPage from '../components/OrderPage.vue';
 import ProcPage from '../components/ProcPage.vue';
@@ -65,7 +67,16 @@ const routes = [
     name: 'UserPage2',
     component: UserPage2
   },
-
+  {
+    path: '/addr2',
+    name: 'AddrPage2',
+    component: AddrPage2
+  },
+  {
+    path: '/addr3',
+    name: 'AddrPage3',
+    component: AddrPage3
+  },
   // 다른 경로에 대한 라우트 설정
 ];
 

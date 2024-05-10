@@ -12,84 +12,64 @@
         <input v-model="addr" maxlength="15" placeholder="주소를 입력해주세요.">
       </div>
     </div>
-    <div class="keyboard">
-      <div class="key_row">
-        <button class="key_btn">ㅂ</button>
-        <button class="key_btn">ㅈ</button>
-        <button class="key_btn">ㄷ</button>
-        <button class="key_btn">ㄱ</button>
-        <button class="key_btn">ㅅ</button>
-        <button class="key_btn">ㅛ</button>
-        <button class="key_btn">ㅕ</button>
-        <button class="key_btn">ㅑ</button>
-        <button class="key_btn">ㅐ</button>
-        <button class="key_btn">ㅔ</button>
+    <div class="addr_wrap">
+      <div class="addr_box">
+        <div class="addr_row">
+          <span>도로명</span>
+          <p>서울 강남구 가로수길5</p>
+        </div>
+        <div class="addr_row">
+          <span>지 번</span>
+          <p>서울 강남구 신사도 537-5</p>
+        </div>
       </div>
-      <div class="key_row">
-        <button class="key_btn">ㅁ</button>
-        <button class="key_btn">ㄴ</button>
-        <button class="key_btn">ㅇ</button>
-        <button class="key_btn">ㄹ</button>
-        <button class="key_btn">ㅎ</button>
-        <button class="key_btn">ㅗ</button>
-        <button class="key_btn">ㅓ</button>
-        <button class="key_btn">ㅏ</button>
-        <button class="key_btn">ㅣ</button>
-      </div>
-      <div class="key_row">
-        <button class="key_btn key_icon">
-          <img src="../assets/upper.png" />
-        </button>
-        <button class="key_btn">ㅋ</button>
-        <button class="key_btn">ㅌ</button>
-        <button class="key_btn">ㅊ</button>
-        <button class="key_btn">ㅍ</button>
-        <button class="key_btn">ㅠ</button>
-        <button class="key_btn">ㅜ</button>
-        <button class="key_btn">ㅡ</button>
-        <button class="key_btn key_icon">
-          <img src="../assets/delete.png" />
-        </button>
-      </div>
-      <div class="key_row">
-        <button class="key_btn key_icon">123</button>
-        <button class="key_btn key_space">스페이스</button>
-        <button class="key_btn key_icon">
-          <img src="../assets/search.png" />
-        </button>
+      <div class="addr_box">
+        <div class="addr_row">
+          <span>도로명</span>
+          <p>서울 강남구 가로수길5</p>
+        </div>
+        <div class="addr_row">
+          <span>지 번</span>
+          <p>서울 강남구 신사도 537-5</p>
+        </div>
       </div>
     </div>
-
     <div class="bottom_content">
-      <div class="icon_row">
-        <span class="tip">Tip</span>
-      </div>
-      <div class="info_txt">
-        아래와 같은 조합으로 검색을 하시면 더욱 정확한 결과가 검색됩니다.
-      </div>
-      <div class="info_box">
-        <div class="info_row">
-          · 도로명 + 건물명
-          <span>예)서초대로</span>
-        </div>
-        <div class="info_row">
-          · 동/읍/면/리 + 번지
-          <span>예)성수동 999-999</span>
-        </div>
-        <div class="info_row">
-          · 건물명/아파트명
-          <span>예)성수한라시트마벨리</span>
-        </div>
-      </div>
       <div class="btn_wrap">
-        <router-link class="btn" to="/addr2">임시 다음페이지 이동</router-link>
+        <router-link to="/addr3" class="btn">다음</router-link>
       </div>
     </div>
-    
   </div>
 </template>
 
 <style scoped>
+.addr_wrap {
+  display: block;
+  margin: 20px 40px 20px;
+}
+.addr_box {
+  border: 1px solid #E4E4E4;
+  border-radius: 10px;
+  padding: 10px 25px;
+  margin: 8px 0px;
+}
+.addr_row {
+  display: block;
+  text-align: left;
+  line-height: 20px;
+}
+.addr_row span {
+  display: inline-block;
+  color: #1E64FF;
+  border: 1px solid #C6DEFF;
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+.addr_row p {
+  display: inline-block;
+  color: #767676;
+  margin-left: 10px;
+}
 .bottom_content {
   position: fixed;
   bottom: 20px;
@@ -246,6 +226,21 @@ h3 {
   color: #767676;
   outline: none;
 }
+.btn_wrap {
+  margin: 10px 26px;
+}
+.btn {
+  text-decoration: none;
+  display:block;
+  background-color: #1E64FF;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 20px;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  border: 0px;
+}
 </style>
 
 <script>
@@ -256,7 +251,7 @@ export default {
   },
   data() {
     return {
-      addr: '',
+      addr: '강남 신사동 537',
       inputText: '', // 사용자가 입력한 텍스트
       chosungIndex: ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"],
       jongsungIndex: ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"],
