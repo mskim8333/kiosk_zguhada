@@ -1,7 +1,9 @@
 <template>
   <div class="addrpage">
     <div class="top_row">
-      <img class="top_btn" alt="logo" src="../assets/home.png">
+      <router-link to="/">
+        <img class="top_btn" alt="logo" src="../assets/home.png">
+      </router-link>
     </div>
     <h5>대형생활폐기물 배출을 위해</h5>
     <h3>배출하실 주소를 입력해주세요.</h3>
@@ -51,7 +53,7 @@
       </div>
       <div class="key_row">
         <button class="key_btn key_icon">123</button>
-        <button class="key_btn key_space"></button>
+        <button class="key_btn key_space">스페이스</button>
         <button class="key_btn key_icon">
           <img src="../assets/search.png" />
         </button>
@@ -189,17 +191,21 @@ h5 {
   font-size: 17px;
   border-radius: 5px;
   margin: 4px;
-  width: 38px;
-  height: 45px;
+  width: 88px;
+  height: 85px;
 }
 .key_btn img {
   height: 20px;
 }
 .key_icon {
-  width: 48px;
+  width: 88px;
+}
+.key_icon {
+  width: 88px;
 }
 .key_space {
-  width: 300px;
+  width: 740px;
+  color: #F5F5F5;
 }
 .top_row {
   overflow: hidden;
@@ -207,18 +213,18 @@ h5 {
 .top_btn {
   float: left;
   width: 20px;
-  margin: 0 20px;
+  margin: 20px 20px;
 }
 h5 {
   color: #767676;
   font-size: 20px;
   font-weight: 400;
-  margin: 80px 0 10px;
+  margin: 100px 0 10px;
 }
 h3 {
   color: #2C2C2C;
   font-size: 24px;
-  margin: 0px 0px 40px;
+  margin: 0px 0px 100px;
 }
 .ip_row {
   margin: 0 40px 20px;

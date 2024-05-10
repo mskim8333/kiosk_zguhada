@@ -1,11 +1,16 @@
 <template>
   <div class="mainpage">
     <div class="mainpage_top">
-      <img class="logo" alt="logo" src="../assets/main_camp.png">
+      <div class="mainpage_bg">
+        <img class="bg_logo" alt="logo" src="../assets/bg.png">  
+      </div>
+      <div class="logo_wrap">
+        <img class="logo" alt="logo" src="../assets/main_camp.png">
+      </div>
     </div>
     <div class="mainpage_bottom">
       <div class="btn_wrap">
-        <button class="btn">이 곳을 터치해주세요</button>
+        <router-link class="btn" to="/proc">이 곳을 터치해주세요</router-link>
       </div>
       <h5>대형생활폐기물 배출 방법</h5>
       <div class="icon_wrap">
@@ -74,17 +79,36 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.mainpage_top {
-  background: url(../assets/bg.png);
+.mainpage {
+  overflow: hidden;
   width: 100%;
-  height: 500px;
+  height: 100%;
+}
+.mainpage_top {
+  /*
+  background: url(../assets/bg.png);
+  background: url(file:///images/assets/bg.png);
+  */
+  width: 100%;
+  height: 45%;
   overflow:hidden;
+}
+.mainpage_bg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+.bg_logo {
+  width: 100%;
+  height: 100%;
 }
 .mainpage_bottom {
   position: fixed;
   bottom: 0px;
   width: 100%;
-  height: 550px;
+  height: 60%;
   background-color: #FFFFFF;
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
@@ -96,20 +120,20 @@ h5 {
   font-weight: 600;
 }
 .icon_wrap {
-  height: 430px;
+  height: calc(100% - 130px);
   padding-top:5px;
 }
 .icon_row {
-  height: 130px;
   overflow: hidden;
   /* background-color: #FFFFFF; */
   margin: 10px 20px;
+  height: 33%;
 }
 .icon_1_3:first-child {
   position: relative;
   float: left;
   width: 33%;
-  height: 130px;
+  height: 100%;
   background-color: #F5F5F5;
   border-radius: 10px;
 }
@@ -117,7 +141,7 @@ h5 {
   position: relative;
   float: left;
   width: calc(34% - 20px);
-  height: 130px;
+  height: 100%;
   margin-left: 10px;
   background-color: #F5F5F5;
   border-radius: 10px;
@@ -126,7 +150,7 @@ h5 {
   position: relative;
   float: right;
   width: 33%;
-  height: 130px;
+  height: 100%;
   background-color: #F5F5F5;
   border-radius: 10px;
 }
@@ -134,7 +158,7 @@ h5 {
   position: relative;
   float: left;
   width: calc(50% - 5px);
-  height: 130px;
+  height: 100%;
   background-color: #F5F5F5;
   border-radius: 10px;
 }
@@ -142,7 +166,7 @@ h5 {
   position: relative;
   float: right;
   width: calc(50% - 5px);
-  height: 130px;
+  height: 100%;
   background-color: #F5F5F5;
   border-radius: 10px;
 }
@@ -158,9 +182,22 @@ h5 {
 }
 .icon_img {
   height: 40%;
-  margin: 30px 0 10px;
+  margin: 15% 0 10px;
 }
-
+.icon_1_3 .icon_img {
+  margin-top: 25%;
+}
+.icon_txt {
+  margin-top: 20px;
+  font-weight: 600;
+}
+.logo_wrap {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  text-align:center;
+}
 img.logo {
   margin: 100px 0 100px;
   width: 80%;
@@ -168,18 +205,21 @@ img.logo {
 
 .btn_wrap {
   position: absolute;
-  top: -30px;
+  top: -40px;
   margin: 0px;
   width: calc(100% - 80px);
   padding: 0px 40px;
 }
 .btn {
+  display: inline-block;
+  text-decoration: none;
   background-color: #1E64FF;
   border-radius: 10px;
   color: #FFFFFF;
   font-size: 24px;
   width: 100%;
-  height: 60px;
+  line-height: 80px;
+  height: 80px;
   border: 0px;
 }
 

@@ -1,4 +1,5 @@
 <template>
+  <router-view/>
   <!--<TempPage msg="Welcome to Your Vue.js App"/>-->
   <!--<ProcPage msg="Welcome to Your Vue.js App"/>-->
   <!--<MainPage msg="Welcome to Your Vue.js App"/>-->
@@ -8,7 +9,7 @@
   <!--<UserPage2 />-->
   <!--<UserPage />-->
   <!--<SelPage />-->
-  <OrderPage />
+  <!--<OrderPage />-->
 </template>
 
 <script>
@@ -21,11 +22,11 @@
 //import UserPage2 from './components/UserPage.vue'
 //import UserPage from './components/UserPage2.vue'
 //import SelPage from './components/SelPage.vue'
-import OrderPage from './components/OrderPage.vue'
+//import OrderPage from './components/OrderPage.vue'
 
 export default {
   name: 'App',
-  components: {
+  //components: {
     //SignIn,
     //MainPage,
     //ProcPage,
@@ -34,8 +35,8 @@ export default {
     //ItemPage,
     //UserPage2,
     //UserPage, 
-    OrderPage
-  }
+    //OrderPage,
+  //}
 }
 </script>
 
