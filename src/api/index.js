@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const apiUrl = 'https://backend-dev.soogobot.com/api';
+
 /**
  * 결제 요청 생성 API
  * @param {string} paymentMethodId - 결제 수단 ID
@@ -15,7 +17,7 @@ import axios from 'axios';
  */
 export async function createPaymentRequest(paymentMethodId, data, kioskToken) {
   try {
-    const response = await axios.post(`/payment/${paymentMethodId}/request/`, data, {
+    const response = await axios.post(`${apiUrl}/payment/${paymentMethodId}/request/`, data, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
@@ -39,7 +41,7 @@ export async function createPaymentRequest(paymentMethodId, data, kioskToken) {
  */
 export async function getPaymentInfo(paymentMethodId, paymentId, kioskToken) {
   try {
-    const response = await axios.get(`/payment/${paymentMethodId}/${paymentId}/`, {
+    const response = await axios.get(`${apiUrl}/payment/${paymentMethodId}/${paymentId}/`, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
@@ -59,7 +61,7 @@ export async function getPaymentInfo(paymentMethodId, paymentId, kioskToken) {
  */
 export async function createPaymentApprove(paymentMethodId, paymentId, data, kioskToken) {
   try {
-    const response = await axios.post(`/payment/${paymentMethodId}/${paymentId}/approve/`, data, {
+    const response = await axios.post(`${apiUrl}/payment/${paymentMethodId}/${paymentId}/approve/`, data, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
@@ -78,7 +80,7 @@ export async function createPaymentApprove(paymentMethodId, paymentId, data, kio
  */
 export async function getPaymentCancelList(paymentMethodId, paymentId, kioskToken) {
   try {
-    const response = await axios.get(`/payment/${paymentMethodId}/${paymentId}/cancel/`, {
+    const response = await axios.get(`${apiUrl}/payment/${paymentMethodId}/${paymentId}/cancel/`, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
@@ -97,7 +99,7 @@ export async function getPaymentCancelList(paymentMethodId, paymentId, kioskToke
  */
 export async function createPaymentCancel(paymentMethodId, paymentId, kioskToken) {
   try {
-    const response = await axios.post(`/payment/${paymentMethodId}/${paymentId}/cancel/`, null, {
+    const response = await axios.post(`${apiUrl}/payment/${paymentMethodId}/${paymentId}/cancel/`, null, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
@@ -146,7 +148,7 @@ export async function createPaymentCancel(paymentMethodId, paymentId, kioskToken
  */
 export async function createLargeWasteRequest(serGovId, data, kioskToken) {
   try {
-    const response = await axios.post(`/zguhada/kiosk/blw/request/${serGovId}/create/`, data, {
+    const response = await axios.post(`${apiUrl}/zguhada/kiosk/blw/request/${serGovId}/create/`, data, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
@@ -177,7 +179,7 @@ export async function createLargeWasteRequest(serGovId, data, kioskToken) {
  */
 export async function getServiceGovernmentInfo(guCode, kioskToken) {
   try {
-    const response = await axios.get(`/zguhada/kiosk/blw/service-gov/${guCode}/`, {
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/blw/service-gov/${guCode}/`, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
@@ -213,7 +215,7 @@ export async function getServiceGovernmentInfo(guCode, kioskToken) {
  */
 export async function getAddressToDisposeLocation(serGovId, bCode, bonbun, bubun, kioskToken) {
   try {
-    const response = await axios.get(`/zguhada/kiosk/blw/${serGovId}/disposelocation/basegeo/`, {
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/blw/${serGovId}/disposelocation/basegeo/`, {
       headers: { 'kiosk-token': kioskToken },
       params: { b_code: bCode, bonbun, bubun }
     });
@@ -248,7 +250,7 @@ export async function getAddressToDisposeLocation(serGovId, bCode, bonbun, bubun
  */
 export async function getAdminRequestList(kioskToken, authorization, serGovId) {
   try {
-    const response = await axios.get(`/zguhada/kiosk/blw/${serGovId}/list/`, {
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/blw/${serGovId}/list/`, {
       headers: { 'kiosk-token': kioskToken, 'Authorization': authorization }
     });
     return response.data;
@@ -269,7 +271,7 @@ export async function getAdminRequestList(kioskToken, authorization, serGovId) {
  */
 export async function getKioskInformation(kioskToken, authorization) {
   try {
-    const response = await axios.get(`/zguhada/kiosk/info/`, {
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/info/`, {
       headers: { 'kiosk-token': kioskToken, 'Authorization': authorization }
     });
     return response.data;
@@ -289,7 +291,7 @@ export async function getKioskInformation(kioskToken, authorization) {
  */
 export async function searchAddress(kioskToken, query, page = 1, size = 10) {
   try {
-    const response = await axios.get(`/zguhada/kiosk/postcode/search/`, {
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/postcode/search/`, {
       headers: { 'kiosk-token': kioskToken },
       params: { query, page, size }
     });
@@ -314,7 +316,7 @@ export async function searchAddress(kioskToken, query, page = 1, size = 10) {
  */
 export async function getKioskProducts(kioskToken, search, ordering, page) {
   try {
-    const response = await axios.get(`/zguhada/kiosk/products/`, {
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/products/`, {
       headers: { 'kiosk-token': kioskToken },
       params: { search, ordering, page }
     });
@@ -334,7 +336,7 @@ export async function getKioskProducts(kioskToken, search, ordering, page) {
  */
 export async function getKioskServiceStatus(kioskToken) {
   try {
-    const response = await axios.get(`/zguhada/kiosk/service-status/`, {
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/service-status/`, {
       headers: { 'kiosk-token': kioskToken }
     });
     return response.data;
