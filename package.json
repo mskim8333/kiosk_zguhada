@@ -21,7 +21,6 @@
     "sass": "^1.77.1",
     "sass-loader": "^14.2.1",
     "simple-keyboard": "^3.7.79",
-    "sqlite3": "^5.1.7",
     "vue": "^3.2.13",
     "vue-router": "^4.3.2",
     "vue-virtual-keyboard-ko": "^0.2.2"

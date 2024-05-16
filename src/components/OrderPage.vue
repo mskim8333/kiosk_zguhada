@@ -71,11 +71,31 @@
           <span class="info_content"><p>8,000</p>원</span>
         </div>
       </div>
-      <button class="info_btn">선택완료</button>
+      <button class="info_btn" @click="completeNext">결제</button>
     </div>
     
   </div>
 </template>
+
+
+
+<script>
+export default {
+  name: 'AddrPage',
+  props: {
+  },
+  data() {
+    return {
+      addr: '',
+    };
+  },
+  methods: {
+    completeNext() {
+      this.$router.push({ name: 'MainPage' });
+    }
+  }
+};
+</script>
 
 <style scoped>
 .card {
@@ -418,19 +438,3 @@ h3 {
   outline: none;
 }
 </style>
-
-<script>
-export default {
-  name: 'AddrPage',
-  props: {
-    msg: String
-  },
-  data() {
-    return {
-      addr: '',
-    };
-  }  
-};
-</script>
-
-

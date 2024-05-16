@@ -59,7 +59,7 @@
   <div :class="{ 'opa_bg': true, 'opa_hide': isActive2 }"></div>
   <div :class="{ 'opa_alert': true, 'opa_hide': isActive2 }">
     <div class="opa_alert_top">
-      <span class="opa_msg">선택하신 주소가<br />"{{ selAddr }}"가 맞으신가요?</span>
+      <span class="opa_msg mt50">선택하신 주소가<br />"{{ selAddr }}"가 맞으신가요?</span>
     </div>
     <div class="opa_alert_bottom">
       <button class="btn_n" @click="toggleActive2">아니요</button>
@@ -424,5 +424,9 @@ h3 {
 }
 .opa_msg {
   padding-top: 20%;
+}
+.mt50 {
+  padding-top: 230px;
+  line-height: 60px;
 }
 </style>
