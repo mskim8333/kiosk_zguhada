@@ -51,7 +51,7 @@
             <img class="icon_img" src="../assets/icon6.png">
             <div class="icon_txt">폐기물 배출</div>
           </div>
-          <div class="icon_1_2">
+          <div class="icon_1_2" @click="SignOut">
             <span class="icon_no">07</span>
             <img class="icon_img" src="../assets/icon7.png">
             <div class="icon_txt">수거 처리</div>
@@ -68,11 +68,26 @@ export default {
   props: {
     msg: String
   },
+  created() {
+    const data = localStorage.getItem('admintoken');
+    if (data == null || data == '') {
+      this.$router.push({ name: 'SignIn' });
+    }
+
+  },
   data() {
     return {
     }
   },
   methods: {
+    SignOut () {
+      try {
+        localStorage.setItem('admintoken', null);
+        this.$router.push({ name: 'SignIn' });
+      } catch (error) {
+        console.error('error', error);
+      }
+    },
   }
 }
 </script>

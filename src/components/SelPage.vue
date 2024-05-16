@@ -1,8 +1,12 @@
 <template>
   <div class="itempage">
     <div class="top_row">
-      <img class="top_btn" alt="logo" src="../assets/back.png">
-      <img class="top_btn2" alt="logo" src="../assets/home.png">
+      <router-link to="/addr3">
+        <img class="top_btn" alt="logo" src="../assets/back.png">
+      </router-link>
+      <router-link to="/">
+        <img class="top_btn2" alt="logo" src="../assets/home.png">
+      </router-link>
     </div>
     <h3>품목을 선택해주세요.</h3>
     <h5>배출품목에 없는 경우, 문의 후 선택하여 주시기 바랍니다.</h5>
@@ -353,6 +357,7 @@ h5 {
 }
 .top_row {
   overflow: hidden;
+  margin: 20px 0;
 }
 .top_btn {
   float: left;

@@ -345,3 +345,33 @@ export async function getKioskServiceStatus(kioskToken) {
     throw error;
   }
 }
+
+
+/**
+ * 관리자 로그인 API
+ * @param {string} username - 사용자명
+ * @param {string} password - 비밀번호
+ * @returns {Promise<string>} - access token
+ */
+export async function adminLogin(username, password, kioskToken) {
+  try {
+    const response = await axios.post(`${apiUrl}/zguhada/kiosk/login/`, {
+      username: username,
+      password: password
+    }, {
+      headers: {
+        'kiosk-token': kioskToken,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 200 && response.data && response.data.access_token) {
+      return response.data.access_token;
+    } else {
+      throw new Error('로그인에 실패하였습니다.');
+    }
+  } catch (error) {
+    console.error('로그인 중 오류 발생:', error);
+    throw error;
+  }
+}
