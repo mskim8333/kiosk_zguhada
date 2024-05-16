@@ -9,7 +9,7 @@
     <h3>배출하실 주소를 입력해주세요.</h3>
     <div class="ip_row">
       <div>
-        <input :value="keyValue" maxlength="15" placeholder="주소를 입력해주세요.">
+        <input :value="keyValue" maxlength="15" placeholder="주소를 입력해주세요." readonly>
       </div>
     </div>
     <div class="keyboard">
@@ -26,8 +26,11 @@
             <span class="keyInfo keySearch" v-else-if="key[shiftIndex] === 'search'">
               <!--<img src="../assets/search.png" />-->검색
             </span>
-            <span class="keyInfo keyShift" v-else-if="key[shiftIndex] === 'Shift'">
+            <span class="keyInfo keyShift" v-else-if="key[shiftIndex] === 'Shift' && shiftIndex === 0">
               <img src="../assets/upper.png" />
+            </span>
+            <span class="keyInfo keyShift2" v-else-if="key[shiftIndex] === 'Shift' && shiftIndex === 1">
+              <img src="../assets/upper2.png" />
             </span>
             <span class="keyInfo keyBackspace" v-else-if="key[shiftIndex] === 'BackSpace'">
               <img src="../assets/delete.png" />
@@ -38,6 +41,7 @@
         </ul>
       </div>
     </div>
+
     <div class="bottom_content">
       <div class="icon_row">
         <span class="tip">Tip</span>
@@ -59,11 +63,18 @@
           <span>예)성수한라시트마벨리</span>
         </div>
       </div>
-      <div class="btn_wrap">
-        <router-link class="btn" to="/addr2">임시 다음페이지 이동</router-link>
-      </div>
     </div>
     
+  </div>
+  <div :class="{ 'opa_bg': true, 'opa_hide': isActive }"></div>
+  <div :class="{ 'opa_alert': true, 'opa_hide': isActive }">
+    <div class="opa_alert_top">
+      <img src="../assets/alert.png" />
+      <span>{{ msg1 }}</span>
+    </div>
+    <div class="opa_alert_bottom">
+      <button @click="toggleActive">확인</button>
+    </div>
   </div>
 </template>
 
@@ -76,7 +87,14 @@ export default {
   props: {
     msg: String,
     valueArr: Array,
-    theme: String
+    theme: String,
+  },
+  mounted() {
+    localStorage.setItem('addrData', null); // 주소 검색 결과 초기화
+    localStorage.setItem('addrInput', null); // 입력 주소 초기화
+    localStorage.setItem('guData', null); // 지자체 정보 초기화
+    localStorage.setItem('selData', null); // 주소 선택 정보 초기화
+    localStorage.setItem('selData2', null); // 상세 주소 입력 정보 초기화
   },
   data() {
     return {
@@ -86,20 +104,36 @@ export default {
       capsLock: 0,
       lang: 'kr',
       keyArr: [],
-      keyValue: null
+      keyValue: null,
+      items: [],
+      msg1: '',
+      isActive: true,
     };
   },
   methods: {
     async fetchSearchAddress () {
       console.log('실행')
       try {
-        const kioskToken = '20bcde59e4221e514a49326b0d4e5b74';
-        const query = this.keyValue;
-        const result = await searchAddress(kioskToken, query);
-        console.log('주소 검색 정보:', result);
-        // 여기서 반환된 설정 정보를 사용할 수 있습니다.
+        if (this.keyValue) {
+          const kioskToken = '20bcde59e4221e514a49326b0d4e5b74';
+          const query = this.keyValue;
+          const result = await searchAddress(kioskToken, query);
+
+          const filteredData = (result.documents).filter(item => item.address.main_address_no && item.road_address.main_building_no);
+          console.log(filteredData);
+
+          localStorage.setItem('addrData', JSON.stringify(filteredData));
+          localStorage.setItem('addrInput', query);
+
+          this.$router.push({ name: 'AddrPage2' });
+        } else {
+          this.msg1 = '주소를 입력해주세요.';
+          this.isActive = false;
+        }
       } catch (error) {
         console.error('주소 검색 중에 오류가 발생했습니다:', error);
+        this.msg1 = '주소 검색 중에 오류가 발생했습니다.';
+          this.isActive = false;
       }
     },
     classObject (key) {
@@ -165,103 +199,15 @@ export default {
       await this.keyArr.pop()
       this.keyValue = await Hangul.assemble(this.keyArr)
       await this.$emit('getKeyValue', this.keyValue)
+    },
+    toggleActive() {
+      this.isActive = true;
     }
   }
 };
 </script>
 
 <style scoped>
-.bottom_content {
-  position: fixed;
-  bottom: 20px;
-  left: 0px;
-  width: 100%;
-}
-.info_row {
-  text-align: left;
-  font-size: 24px;
-  line-height: 40px;
-  color: #767676;
-}
-.info_row span {
-  margin-left: 10px;
-  font-size: 18px;
-}
-.info_box {
-  background-color: #F5F5F5;
-  margin: 0px 30px;
-  padding: 30px 20px;
-  border-radius: 5px;
-}
-.info_txt {
-  color: #767676;
-  font-size: 22px;
-  text-align: left;
-  margin: 10px 30px;
-}
-.icon_row {
-  display: block;
-  text-align: left;
-  margin: 0 30px 10px;
-}
-.tip {
-  display: inline-block;
-  background-color: #EAF2FF;
-  padding: 3px 8px;
-  font-size: 24px;
-  color: #2960E8;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
-}
-.addrpage {
-  width: 100%;
-  height: 1100px;
-  overflow:hidden;
-  background-color: #FFFFFF;
-}
-.temppage_bottom {
-  position: fixed;
-  bottom: 0px;
-  width: 100%;
-  height: 550px;
-}
-img.logo {
-  margin: 180px 0 20px;
-  width: 25%;
-}
-h5 {
-  color: #2C2C2C;
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-.msg {
-  line-height: 30px;
-  color: #767676;
-}
-.msg span {
-  display: block;
-  font-weight: 600;
-}
-.bottom_msg {
-  position: absolute;
-  bottom: 30px;
-  width: calc(100% - 40px);
-  margin: 0 0 0 20px;
-  padding: 10px 0px;
-  background-color: #FFFFFF;
-  border-radius: 10px;
-  color: #767676;
-  line-height: 30px;
-}
-.bottom_msg span {
-  display: block;
-  margin-left: 20px;
-  font-weight: 400;
-  text-align: left;
-  font-size: 13px;
-}
 .top_row {
   overflow: hidden;
 }
@@ -324,6 +270,10 @@ li {
   text-align: center;
   margin: 4px;
 }
+.keyInfo:active {
+  background-color: #1E64FF;
+  color: #FFFFFF;
+}
 .keySpace {
   width: 700px;
   color: #F5F5F5;
@@ -348,5 +298,106 @@ li {
   display: inline-block;
   width: 30px;
   vertical-align: middle;
+}
+.keyShift2 {
+  background-color: #1E64FF;
+}
+.keyShift2 img {
+  display: inline-block;
+  width: 30px;
+  vertical-align: middle;
+}
+.opa_bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background-color: #000000;
+  opacity: 0.5;
+}
+.opa_alert {
+  overflow: hidden;
+  position: fixed;
+  width: 70%;
+  height: 30%;
+  left: 15%;
+  top: 32%;
+  background-color: #FFFFFF;
+  border-radius: 4%;
+}
+.opa_alert_top {
+  width: 100%;
+  height: 80%;
+  font-size: 40px;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+}
+.opa_alert_top img {
+  display: inline-block;
+  margin: 15% 0 20px 0;
+}
+.opa_alert_top span {
+  display: block;
+}
+.opa_alert_bottom {
+  width: 100%;
+  height: 20%;
+}
+.opa_alert_bottom button {
+  width: 100%;
+  height: 100%;
+  background-color: #1E64FF;
+  border: 0px;
+  color: #FFFFFF;
+  font-size: 40px;
+  font-weight: 600;
+}
+.opa_hide {
+  display: none;
+}
+.bottom_content {
+  position: fixed;
+  bottom: 20px;
+  left: 0px;
+  width: 100%;
+}
+.info_row {
+  text-align: left;
+  font-size: 24px;
+  line-height: 40px;
+  color: #767676;
+}
+.info_row span {
+  margin-left: 10px;
+  font-size: 18px;
+}
+.info_box {
+  background-color: #F5F5F5;
+  margin: 0px 30px;
+  padding: 30px 20px;
+  border-radius: 5px;
+}
+.info_txt {
+  color: #767676;
+  font-size: 22px;
+  text-align: left;
+  margin: 10px 30px;
+}
+.icon_row {
+  display: block;
+  text-align: left;
+  margin: 0 30px 10px;
+}
+.tip {
+  display: inline-block;
+  background-color: #EAF2FF;
+  padding: 3px 8px;
+  font-size: 24px;
+  color: #2960E8;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 </style>

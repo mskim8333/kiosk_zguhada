@@ -5,63 +5,46 @@
         <img class="top_btn" alt="logo" src="../assets/home.png">
       </router-link>
     </div>
-    <h5>대형생활폐기물 배출을 위해1111</h5>
+    <h5>대형생활폐기물 배출을 위해</h5>
     <h3>배출하실 주소를 입력해주세요.</h3>
     <div class="ip_row">
       <div>
-        <input v-model="addr" maxlength="15" placeholder="주소를 입력해주세요.">
+        <input :value="addr1" maxlength="15" readonly>
       </div>
-      <div class="mt10">
-        <input v-model="addr2" maxlength="15" placeholder="상세주소를 입력해주세요.">
+      <div class="mt20">
+        <input :value="keyValue" maxlength="15" placeholder="상세 주소를 입력해주세요." readonly>
       </div>
     </div>
     <div class="keyboard">
-      <div class="key_row">
-        <button class="key_btn">ㅂ</button>
-        <button class="key_btn">ㅈ</button>
-        <button class="key_btn">ㄷ</button>
-        <button class="key_btn">ㄱ</button>
-        <button class="key_btn">ㅅ</button>
-        <button class="key_btn">ㅛ</button>
-        <button class="key_btn">ㅕ</button>
-        <button class="key_btn">ㅑ</button>
-        <button class="key_btn">ㅐ</button>
-        <button class="key_btn">ㅔ</button>
-      </div>
-      <div class="key_row">
-        <button class="key_btn">ㅁ</button>
-        <button class="key_btn">ㄴ</button>
-        <button class="key_btn">ㅇ</button>
-        <button class="key_btn">ㄹ</button>
-        <button class="key_btn">ㅎ</button>
-        <button class="key_btn">ㅗ</button>
-        <button class="key_btn">ㅓ</button>
-        <button class="key_btn">ㅏ</button>
-        <button class="key_btn">ㅣ</button>
-      </div>
-      <div class="key_row">
-        <button class="key_btn key_icon">
-          <img src="../assets/upper.png" />
-        </button>
-        <button class="key_btn">ㅋ</button>
-        <button class="key_btn">ㅌ</button>
-        <button class="key_btn">ㅊ</button>
-        <button class="key_btn">ㅍ</button>
-        <button class="key_btn">ㅠ</button>
-        <button class="key_btn">ㅜ</button>
-        <button class="key_btn">ㅡ</button>
-        <button class="key_btn key_icon">
-          <img src="../assets/delete.png" />
-        </button>
-      </div>
-      <div class="key_row">
-        <button class="key_btn key_icon">123</button>
-        <button class="key_btn key_space">스페이스</button>
-        <button class="key_btn key_icon">
-          <img src="../assets/search.png" />
-        </button>
+      <div v-for="(keyLine, index) in KeyData[lang]" :key="index">
+        <ul>
+          <li
+            v-for="(key, index) in keyLine"
+            :key="index"
+            class="key"
+            v-bind:class="classObject(key[shiftIndex])"
+            @click="() => keyEvent(key[shiftIndex])"
+          >
+            <span class="keyInfo keySpace" v-if="key[shiftIndex] === 'space'">{{ key[shiftIndex] }}</span>
+            <span class="keyInfo keySearch" v-else-if="key[shiftIndex] === 'search'">
+              <!--<img src="../assets/search.png" />-->완료
+            </span>
+            <span class="keyInfo keyShift" v-else-if="key[shiftIndex] === 'Shift' && shiftIndex === 0">
+              <img src="../assets/upper.png" />
+            </span>
+            <span class="keyInfo keyShift2" v-else-if="key[shiftIndex] === 'Shift' && shiftIndex === 1">
+              <img src="../assets/upper2.png" />
+            </span>
+            <span class="keyInfo keyBackspace" v-else-if="key[shiftIndex] === 'BackSpace'">
+              <img src="../assets/delete.png" />
+            </span>
+            <span class="keyInfo keyLang" v-else-if="key[shiftIndex] === '한/영'">{{ key[shiftIndex] }}</span>
+            <span class="keyInfo" v-else>{{ key[shiftIndex] }}</span>
+          </li>
+        </ul>
       </div>
     </div>
+
     <div class="bottom_content">
       <div class="icon_row">
         <span class="tip">Tip</span>
@@ -71,164 +54,159 @@
       </div>
       <div class="info_box">
         <div class="info_row">
-          <span>예) 00아파트 101동 입구 앞</span>
+          예) 00아파트 101동 입구 앞
         </div>
       </div>
       <div class="btn_wrap">
-        <router-link class="btn" to="/">완료</router-link>
+        <button class="btn" @click="confirmAction()">완료</button>
       </div>
+    </div>
+    
+  </div>
+  <div :class="{ 'opa_bg': true, 'opa_hide': isActive }"></div>
+  <div :class="{ 'opa_alert': true, 'opa_hide': isActive }">
+    <div class="opa_alert_top">
+      <img src="../assets/alert.png" />
+      <span>{{ msg1 }}</span>
+    </div>
+    <div class="opa_alert_bottom">
+      <button @click="toggleActive">확인</button>
+    </div>
+  </div>
+  <div :class="{ 'opa_bg': true, 'opa_hide': isActive2 }"></div>
+  <div :class="{ 'opa_alert': true, 'opa_hide': isActive2 }">
+    <div class="opa_alert_top">
+      <span class="opa_msg">상세 주소를<br />입력 하시겠습니까?</span>
+    </div>
+    <div class="opa_alert_bottom">
+      <button class="btn_n" @click="toggleActive2">아니요</button>
+      <button class="btn_y" @click="confirmClick">확인</button>
     </div>
   </div>
 </template>
 
+<script>
+import KeyData from './keyData'
+const Hangul = require('hangul-js');
+export default {
+  name: 'AddrPage',
+  props: {
+  },
+  mounted() {
+    localStorage.setItem('selData2', null); // 상세 주소 입력 정보 초기화
+    const data = JSON.parse(localStorage.getItem('selData'));
+    //console.log(data);
+    if (data) {
+      this.addr1 = data.road_address.address_name;
+    }
+  },
+  data() {
+    return {
+      addr1: '',
+      address: '',
+      KeyData,
+      shiftIndex: 0,
+      capsLock: 0,
+      lang: 'kr',
+      keyArr: [],
+      keyValue: null,
+      items: [],
+      msg1: '',
+      isActive: true,
+      isActive2: true,
+    };
+  },
+  methods: {
+    classObject (key) {
+      switch (key) {
+        case 'BackSpace':
+          return { delete: true }
+        case 'Tab':
+          return { tab: true }
+        case 'CapsLock':
+          return { caps: true }
+        case 'Enter':
+          return { enter: true }
+        case 'Shift':
+          if (this.shiftIndex === 1) {
+            return { shift: true, active: true }
+          } return { shift: true, active: false }
+        case '한/영':
+          if (this.lang === 'en') {
+            return { lang: true, active: true }
+          } return { lang: true, active: false }
+        case 'space':
+          return { space: true }
+        default:
+          return { none: false }
+      }
+    },
+    async keyEvent (key) {
+      switch (key) {
+        case 'search':
+          this.confirmAction()
+          break;
+        case 'Shift':
+        case 'CapsLock':
+          if (this.shiftIndex === 1) {
+            this.shiftIndex = 0
+          } else {
+            this.shiftIndex = 1
+          }
+          break
+        case '한/영':
+          if (this.lang === 'kr') {
+            this.lang = 'en'
+          } else {
+            this.lang = 'kr'
+          }
+          break
+        case 'BackSpace':
+          this.delete()
+          break
+        case 'space':
+          await this.keyArr.push(' ')
+          this.keyValue = await Hangul.assemble(this.keyArr)
+          await this.$emit('getKeyValue', this.keyValue)
+          break;
+        default:
+          await this.keyArr.push(key)
+          this.keyValue = await Hangul.assemble(this.keyArr)
+          await this.$emit('getKeyValue', this.keyValue)
+          break
+      }
+    },
+    async delete () {
+      await this.keyArr.pop()
+      this.keyValue = await Hangul.assemble(this.keyArr)
+      await this.$emit('getKeyValue', this.keyValue)
+    },
+    toggleActive() {
+      this.isActive = true;
+    },
+    toggleActive2() {
+      this.isActive2 = true;
+    },
+    confirmAction() {
+      console.log(this.keyValue);
+
+      if (this.keyValue === '' || this.keyValue === null) {
+        console.log('얼럿 출력');
+        this.msg1 = "상세 주소를 입력해주세요.";
+        this.isActive = false;
+      } else {
+        this.isActive2 = false;
+      }
+    },
+    confirmClick() {
+      localStorage.setItem('selData2', this.keyValue);
+      this.$router.push({ name: 'SelPage' });
+    },
+  }
+};
+</script>
+
 <style scoped>
-.addr_wrap {
-  display: block;
-  margin: 20px 40px 20px;
-}
-.addr_box {
-  border: 1px solid #E4E4E4;
-  border-radius: 10px;
-  padding: 10px 25px;
-  margin: 8px 0px;
-}
-.addr_row {
-  display: block;
-  text-align: left;
-  line-height: 20px;
-}
-.addr_row span {
-  display: inline-block;
-  color: #1E64FF;
-  border: 1px solid #C6DEFF;
-  border-radius: 3px;
-  padding: 2px 4px;
-}
-.addr_row p {
-  display: inline-block;
-  color: #767676;
-  margin-left: 10px;
-}
-.bottom_content {
-  position: fixed;
-  bottom: 20px;
-  left: 0px;
-  width: 100%;
-}
-.info_row {
-  text-align: left;
-  line-height: 30px;
-  color: #767676;
-}
-.info_row span {
-  margin-left: 10px;
-  font-size: 13px;
-}
-.info_box {
-  background-color: #F5F5F5;
-  margin: 0px 30px;
-  padding: 30px 20px;
-  border-radius: 5px;
-}
-.info_txt {
-  color: #767676;
-  font-size: 14px;
-  text-align: left;
-  margin: 10px 30px;
-}
-.icon_row {
-  display: block;
-  text-align: left;
-  margin: 0 30px 10px;
-}
-.tip {
-  display: inline-block;
-  background-color: #EAF2FF;
-  padding: 3px 8px;
-  color: #2960E8;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
-}
-.addrpage {
-  width: 100%;
-  height: 1100px;
-  overflow:hidden;
-  background-color: #FFFFFF;
-}
-.temppage_bottom {
-  position: fixed;
-  bottom: 0px;
-  width: 100%;
-  height: 550px;
-}
-img.logo {
-  margin: 180px 0 20px;
-  width: 25%;
-}
-h5 {
-  color: #2C2C2C;
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-.msg {
-  line-height: 30px;
-  color: #767676;
-}
-.msg span {
-  display: block;
-  font-weight: 600;
-}
-.bottom_msg {
-  position: absolute;
-  bottom: 30px;
-  width: calc(100% - 40px);
-  margin: 0 0 0 20px;
-  padding: 10px 0px;
-  background-color: #FFFFFF;
-  border-radius: 10px;
-  color: #767676;
-  line-height: 30px;
-}
-.bottom_msg span {
-  display: block;
-  margin-left: 20px;
-  font-weight: 400;
-  text-align: left;
-  font-size: 13px;
-}
-.key_row {
-  overflow: hidden;
-}
-.key {
-  display: inline-block;
-}
-.key_btn {
-  display: inline-block;
-  border: 0px;
-  background-color: #F5F5F5;
-  color: #767676;
-  font-weight: 600;
-  font-size: 17px;
-  border-radius: 5px;
-  margin: 4px;
-  width: 88px;
-  height: 85px;
-}
-.key_btn img {
-  height: 20px;
-}
-.key_icon {
-  width: 88px;
-}
-.key_icon {
-  width: 88px;
-}
-.key_space {
-  width: 740px;
-  color: #F5F5F5;
-}
 .top_row {
   overflow: hidden;
 }
@@ -239,13 +217,13 @@ h5 {
 }
 h5 {
   color: #767676;
-  font-size: 20px;
+  font-size: 32px;
   font-weight: 400;
   margin: 100px 0 10px;
 }
 h3 {
   color: #2C2C2C;
-  font-size: 24px;
+  font-size: 40px;
   margin: 0px 0px 100px;
 }
 .ip_row {
@@ -261,9 +239,168 @@ h3 {
   width: 100%;
   padding: 10px;
   border: 0px;
-  font-size: 20px;
+  font-size: 30px;
   color: #767676;
   outline: none;
+}
+.ip_row div input::placeholder{
+  color: #B4B4B4;
+}
+ul {
+  margin: 0px;
+  padding: 0px;
+}
+li {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+  display: inline-block;
+}
+.keyInfo {
+  display: block;
+  background-color: #F5F5F5;
+  color: #767676;
+  font-size: 32px;
+  font-weight: 400;
+  border-radius: 10px;
+  width: 90px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+  margin: 4px;
+}
+.keyInfo:active {
+  background-color: #1E64FF;
+  color: #FFFFFF;
+}
+.keySpace {
+  width: 700px;
+  color: #F5F5F5;
+}
+.keyLang {
+  width: 120px;
+}
+.keySearch {
+  width: 140px;
+}
+.keySearch img {
+  display: inline-block;
+  width: 30px;
+  vertical-align: middle;
+}
+.keyBackspace img {
+  display: inline-block;
+  width: 30px;
+  vertical-align: middle;
+}
+.keyShift img {
+  display: inline-block;
+  width: 30px;
+  vertical-align: middle;
+}
+.keyShift2 {
+  background-color: #1E64FF;
+}
+.keyShift2 img {
+  display: inline-block;
+  width: 30px;
+  vertical-align: middle;
+}
+.opa_bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background-color: #000000;
+  opacity: 0.5;
+}
+.opa_alert {
+  overflow: hidden;
+  position: fixed;
+  width: 70%;
+  height: 30%;
+  left: 15%;
+  top: 32%;
+  background-color: #FFFFFF;
+  border-radius: 4%;
+}
+.opa_alert_top {
+  width: 100%;
+  height: 80%;
+  font-size: 40px;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+}
+.opa_alert_top img {
+  display: inline-block;
+  margin: 15% 0 20px 0;
+}
+.opa_alert_top span {
+  display: block;
+}
+.opa_alert_bottom {
+  width: 100%;
+  height: 20%;
+}
+.opa_alert_bottom button {
+  width: 100%;
+  height: 100%;
+  background-color: #1E64FF;
+  border: 0px;
+  color: #FFFFFF;
+  font-size: 40px;
+  font-weight: 600;
+}
+.opa_hide {
+  display: none;
+}
+.bottom_content {
+  position: fixed;
+  bottom: 20px;
+  left: 0px;
+  width: 100%;
+}
+.info_row {
+  text-align: left;
+  font-size: 24px;
+  line-height: 40px;
+  color: #767676;
+}
+.info_row span {
+  margin-left: 10px;
+  font-size: 18px;
+}
+.info_box {
+  background-color: #F5F5F5;
+  margin: 0px 30px;
+  padding: 30px 20px;
+  border-radius: 5px;
+}
+.info_txt {
+  color: #767676;
+  font-size: 22px;
+  text-align: left;
+  margin: 10px 30px;
+}
+.icon_row {
+  display: block;
+  text-align: left;
+  margin: 0 30px 10px;
+}
+.tip {
+  display: inline-block;
+  background-color: #EAF2FF;
+  padding: 3px 8px;
+  font-size: 24px;
+  color: #2960E8;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.mt20 {
+  margin-top: 20px;
 }
 .btn_wrap {
   margin: 10px 26px;
@@ -274,102 +411,27 @@ h3 {
   background-color: #1E64FF;
   border-radius: 10px;
   color: #FFFFFF;
-  font-size: 20px;
+  font-size: 24px;
   width: 100%;
-  height: 60px;
-  line-height: 60px;
+  height: 80px;
+  line-height: 80px;
   border: 0px;
 }
-.mt10 {
-  margin-top: 10px;
+.opa_alert_bottom button.btn_y {
+  margin: 0px;
+  padding: 0px;
+  display: inline-block;
+  width: 50%;
+}
+.opa_alert_bottom button.btn_n {
+  margin: 0px;
+  padding: 0px;
+  display: inline-block;
+  width: 50%;
+  background-color: #EDEDED;
+  color: #2C2C2C;
+}
+.opa_msg {
+  padding-top: 20%;
 }
 </style>
-
-<script>
-export default {
-  name: 'AddrPage',
-  props: {
-    msg: String
-  },
-  data() {
-    return {
-      addr: '서울시 성동구 성수일로 12길 4',
-      addr2: '',
-      inputText: '', // 사용자가 입력한 텍스트
-      chosungIndex: ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"],
-      jongsungIndex: ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"],
-      jComboIndex: ["ㄳ", "ㄵ", "ㄶ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅄ"],
-      jCombo: ["ㄱㅅ", "ㄴㅈ", "ㄴㅎ", "ㄹㄱ", "ㄹㅁ", "ㄹㅂ", "ㄹㅅ", "ㄹㅌ", "ㄹㅍ", "ㄹㅎ", "ㅂㅅ"],
-      mComboIndex: ['ㅘ', 'ㅙ', 'ㅚ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅢ'],
-      mCombo: ['ㅗㅏ', 'ㅗㅐ', 'ㅗㅣ', 'ㅜㅓ', 'ㅜㅔ', 'ㅜㅣ', 'ㅡㅣ']
-    };
-  },
-  computed: {
-    keys() {
-      return ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ','ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-    }
-  },
-  methods: {
-    handleKeyDown(event) {
-      const key = event.key;
-      let inputText = this.inputText;
-
-      // 스페이스 및 백스페이스는 별도로 처리
-      if (key === ' ') {
-        inputText += ' ';
-        this.inputText = inputText;
-        event.preventDefault();
-        return;
-      } else if (key === 'Backspace') {
-        this.inputText = inputText.slice(0, -1);
-        event.preventDefault();
-        return;
-      }
-
-      // 다른 키는 별도의 로직으로 처리
-      let hangeul = '';
-
-      // 한글 자소 분해 로직
-      // Unicode 기준 초성, 중성, 종성을 분리
-      if (/^[ㄱ-ㅎ가-힣]$/.test(key)) {
-        const charCode = key.charCodeAt(0) - 44032;
-        const jongIndex = charCode % 28;
-        const choIndex = parseInt((charCode - jongIndex) / 28 / 21);
-
-        const chosung = this.chosungIndex[choIndex];
-
-        // 이전 글자와 조합된 자음 또는 모음일 경우 처리
-        // ex) ㄱ + ㅏ = 가, ㄱ + ㄱ = ㄲ
-        // (이 부분의 로직은 한글 조합 규칙에 따라 작성되어야 합니다.)
-        // 이 부분의 로직을 통해 입력된 한글을 올바르게 조합하여 hangeul에 저장
-        if (inputText !== '') {
-          const lastChar = inputText.charAt(inputText.length - 1);
-          const lastCharCode = lastChar.charCodeAt(0) - 44032;
-          const lastJongIndex = lastCharCode % 28;
-          //const lastChoIndex = parseInt((lastCharCode - lastJongIndex) / 28 / 21);
-          //const lastChosung = this.chosungIndex[lastChoIndex];
-
-          // 이전 글자의 종성이 있고, 현재 글자가 초성일 경우
-          if (lastJongIndex !== 0 && choIndex !== 0) {
-            // 이전 글자의 종성과 현재 글자의 초성으로 새로운 종성을 구함
-            const newJongsungIndex = this.jComboIndex.indexOf(this.jongsungIndex[lastJongIndex] + chosung);
-            // 새로운 종성이 존재한다면
-            if (newJongsungIndex !== -1) {
-              // 종성을 변경
-              hangeul = this.jCombo[newJongsungIndex];
-            }
-          }
-        }
-
-        // 최종 hangeul을 inputText에 추가
-        this.inputText = inputText + hangeul;
-      } else {
-        // 특수문자 또는 알파벳 등의 경우 처리할 로직 추가
-        // 여기에 추가적인 로직을 작성하세요
-      }
-    }
-  }
-};
-</script>
-
-

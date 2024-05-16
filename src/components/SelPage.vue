@@ -18,7 +18,12 @@
         <img class="top_btn2" alt="logo" src="../assets/circle_left.png">
       </span>
       <div class="cate_content">
-        <button class="active">전체</button>
+        <button class="active"
+        v-for="(item, index) in productList2.categories" 
+        :key="index"
+        >
+          전체
+        </button>
         <button class="">가전</button>
         <button class="">생활용품</button>
         <button class="">기타</button>
@@ -83,6 +88,45 @@
     
   </div>
 </template>
+
+<script>
+import { getKioskProducts } from '../api/index';
+
+export default {
+  name: 'SelPage',
+  props: {
+  },
+  data() {
+    return {
+      productList: [], // 상품 리스트를 저장할 변수 추가
+      productList2: [], // 상품 리스트를 저장할 변수 추가2
+      guData: [],
+      addr: '',
+    };
+  },
+  async mounted() {
+    try {
+      const data = localStorage.getItem('guData');
+      console.log(data);
+      if (data) {
+        this.guData = JSON.parse(data);
+        console.log(this.guData.id);
+      }
+      
+      const kioskToken = '20bcde59e4221e514a49326b0d4e5b74';
+      const response = await getKioskProducts(kioskToken, '', '', 1);
+      const filteredData = (response).filter(item => item.service_government_id == this.guData.id);
+      console.log(filteredData);
+      this.productList2 = JSON.parse(JSON.stringify(filteredData));
+
+    } catch (error) {
+      console.error('상품 정보를 가져오는 중 오류 발생:', error);
+    }
+  },
+  methods: {
+  }, 
+};
+</script>
 
 <style scoped>
 .cate_item {
@@ -322,13 +366,13 @@ h5 {
 }
 h5 {
   color: #767676;
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 400;
   margin: 0px 0 40px;
 }
 h3 {
   color: #2C2C2C;
-  font-size: 24px;
+  font-size: 36px;
   margin: 80px 0px 10px;
 }
 .ip_row {
@@ -347,21 +391,6 @@ h3 {
   font-size: 20px;
   color: #767676;
   outline: none;
+  background-color: #F5F5F5;
 }
 </style>
-
-<script>
-export default {
-  name: 'AddrPage',
-  props: {
-    msg: String
-  },
-  data() {
-    return {
-      addr: '',
-    };
-  }  
-};
-</script>
-
-

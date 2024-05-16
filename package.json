@@ -15,10 +15,13 @@
   "dependencies": {
     "axios": "^1.6.8",
     "core-js": "^3.8.3",
+    "fs": "^0.0.1-security",
     "hangul-js": "^0.2.6",
+    "path": "^0.12.7",
     "sass": "^1.77.1",
     "sass-loader": "^14.2.1",
     "simple-keyboard": "^3.7.79",
+    "sqlite3": "^5.1.7",
     "vue": "^3.2.13",
     "vue-router": "^4.3.2",
     "vue-virtual-keyboard-ko": "^0.2.2"
