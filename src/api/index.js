@@ -327,6 +327,20 @@ export async function getKioskProducts(kioskToken, search, ordering, page) {
   }
 }
 
+export async function getKioskProducts2(kioskToken, search, ordering, page, gid) {
+  try {
+    console.log(gid);
+    const response = await axios.get(`${apiUrl}/zguhada/kiosk/products/`, {
+      headers: { 'kiosk-token': kioskToken },
+      params: { search, ordering, page }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('키오스크에 맞는 품목 전체 조회 중 오류 발생:', error);
+    throw error;
+  }
+}
+
 /**
  * 키오스크 설정 정보 조회 API
  * @param {string} kioskToken - 키오스크 인증 토큰

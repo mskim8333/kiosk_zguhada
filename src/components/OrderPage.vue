@@ -1,8 +1,12 @@
 <template>
   <div class="itempage">
     <div class="top_row">
-      <img class="top_btn" alt="logo" src="../assets/back.png">
-      <img class="top_btn2" alt="logo" src="../assets/home.png">
+      <router-link to="/user2">
+        <img class="top_btn" alt="logo" src="../assets/back.png">
+      </router-link>
+      <router-link to="/">
+        <img class="top_btn2" alt="logo" src="../assets/home.png">
+      </router-link>
     </div>
     <h3>배출신고</h3>
     <h5>신청하신 아래 정보를 확인해 주세요.</h5>
@@ -63,10 +67,6 @@
     <div class="bottom_content">
       <div class="left_info">
         <div class="info_row">
-          <span class="info_title">선택한 품목</span>
-          <span class="info_content"><p>3</p>개</span>
-        </div>
-        <div class="info_row">
           <span class="info_title">결제금액</span>
           <span class="info_content"><p>8,000</p>원</span>
         </div>
@@ -80,7 +80,7 @@
 <style scoped>
 .card {
   display: block;
-  margin: 5px 20px;
+  margin: 15px 20px;
   background-color: #FFFFFF;
   border-radius: 10px;
   overflow: hidden;
@@ -88,23 +88,24 @@
 .card_content {
   display: block;
   text-align: left;
-  height: 20px;
+  height: 40px;
   color: #2C2C2C;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
-  margin: 0px 20px 15px;
+  margin: 0px 30px 15px;
 }
 .card_content2 {
   display: block;
-  height: 20px;
+  height: 40px;
   color: #2C2C2C;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
-  margin: 0px 20px 15px;
+  margin: 0px 30px 15px;
   overflow: hidden;
 }
 .card_content2 .left_content {
   float: left;
+  height: 40px;
 }
 .card_content2 .right_content {
   float: right;
@@ -112,10 +113,12 @@
 }
 .card_content2 span {
   display: inline;
+  font-size: 24px;
 }
 .card_content2 p {
   display: inline;
   margin-left: 20px;
+  font-size: 24px;
 }
 .card_title {
   text-align: left;
@@ -124,27 +127,27 @@
   position: relative;
 }
 .card_title p {
-  margin-left: 20px;
+  margin-left: 30px;
   display: inline-block;
   text-align: left;
-  width: 80px;
-  height: 20px;
+  width: 140px;
+  height: 40px;
   color: #767676;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
 }
 .card_title span {
   display: inline-block;
   width: 200px;
-  height: 20px;
+  height: 40px;
   color: #2C2C2C;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
 }
 .card_title img {
   position: absolute;
-  right: 20px;
-  top: 20px;
+  right: 30px;
+  top: 36px;
   width: 8px;
   padding: 0px;
   margin: 0px;
@@ -212,7 +215,7 @@
 }
 .left_info {
   float: left;
-  width: calc(100% - 160px);
+  width: calc(100% - 240px);
   padding-top: 10px;
 }
 .info_row {
@@ -222,7 +225,7 @@
 .info_title {
   color: #2C2C2C;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 60px;
   float: left;
   width: 40%;
   padding-left: 10px;
@@ -231,7 +234,7 @@
   float: right;
   width: 40%;
   padding-right: 20px;
-  line-height: 24px;
+  line-height: 60px;
   text-align: right;
   color: #2C2C2C;
   font-weight: 600;
@@ -248,7 +251,7 @@
   color: #FFFFFF;
   font-weight: 600;
   height: 100%;
-  width: 160px;
+  width: 240px;
   font-size: 16px; 
 }
 .bottom_content {
@@ -259,7 +262,8 @@
   bottom: 0px;
   left: 0px;
   width: 100%;
-  height: 66px;
+  height: 86px;
+  z-index: 999;
 }
 .info_row {
   text-align: left;
@@ -268,7 +272,7 @@
 }
 .info_row span {
   margin-left: 10px;
-  font-size: 13px;
+  font-size: 18px;
 }
 .info_box {
   background-color: #F5F5F5;
@@ -298,7 +302,7 @@
 }
 .itempage {
   width: 100%;
-  height: 1100px;
+  height: 3000px;
   overflow:hidden;
   background-color: #F5F5F5;
 }
@@ -372,6 +376,7 @@ h5 {
   width: 300px;
 }
 .top_row {
+  margin: 20px 0;
   overflow: hidden;
 }
 .top_btn {
@@ -386,14 +391,14 @@ h5 {
 }
 h5 {
   color: #767676;
-  font-size: 20px;
+  font-size: 32px;
   font-weight: 400;
-  margin: 0px 0 40px;
+  margin: 0px 0 100px;
 }
 h3 {
   color: #2C2C2C;
-  font-size: 24px;
-  margin: 80px 0px 10px;
+  font-size: 40px;
+  margin: 100px 0px 30px;
 }
 .ip_row {
   margin: 0 40px 20px;

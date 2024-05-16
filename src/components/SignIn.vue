@@ -340,7 +340,7 @@ ul {
 }
 li {
   display: inline-block;
-  margin: 0 10px;
+  margin: 0 3px;
 }
 a {
   color: #42b983;
@@ -352,11 +352,11 @@ a {
   font-size: 32px;
   font-weight: 400;
   border-radius: 10px;
-  width: 90px;
-  height: 100px;
-  line-height: 100px;
+  width: 85px;
+  height: 90px;
+  line-height: 90px;
   text-align: center;
-  margin: 4px;
+  margin: 3px;
 }
 .keyInfo:active {
   background-color: #1E64FF;
