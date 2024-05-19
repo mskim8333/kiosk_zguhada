@@ -75,11 +75,29 @@
     </div>
     
   </div>
+  <div :class="{ 'opa_bg': true, 'opa_hide': isActive }"></div>
+  <div :class="{ 'opa_alert': true, 'opa_hide': isActive }">
+    <div class="opa_alert_top">
+      <span>{{ msg1 }}</span>
+      <button 
+        class="opa_btn">
+        
+      </button>
+      <button 
+        class="opa_btn">
+        
+      </button>
+    </div>
+    <div class="opa_close" @click="toggleActive">
+      <img src="../assets/closed.png">
+    </div>
+  </div>
 </template>
 
 
 
 <script>
+import { getKioskProducts2 } from '../api/index';
 export default {
   name: 'AddrPage',
   props: {

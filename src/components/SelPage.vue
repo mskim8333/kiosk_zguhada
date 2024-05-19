@@ -164,7 +164,7 @@
 </template>
 
 <script>
-//import { getKioskProducts2 } from '../api/index';
+import { getKioskProducts2 } from '../api/index';
 
 export default {
   name: 'SelPage',
@@ -189,11 +189,11 @@ export default {
         console.log(this.guData.id);
       }
       
-      //const kioskToken = '20bcde59e4221e514a49326b0d4e5b74';
-      //const response = await getKioskProducts2(kioskToken, '', '', 1, this.guData.id);
-      //const filteredData = (response).filter(item => item.service_government_id == this.guData.id);
-      //console.log(filteredData);
-      //this.productList2 = JSON.parse(JSON.stringify(filteredData));
+      const kioskToken = '20bcde59e4221e514a49326b0d4e5b74';
+      const response = await getKioskProducts2(kioskToken, '', '', 1, this.guData.id);
+      const filteredData = (response).filter(item => item.service_government_id == this.guData.id);
+      console.log(filteredData);
+      this.productList2 = JSON.parse(JSON.stringify(filteredData));
 
     } catch (error) {
       console.error('상품 정보를 가져오는 중 오류 발생:', error);
