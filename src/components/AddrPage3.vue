@@ -199,8 +199,16 @@ export default {
       }
     },
     confirmClick() {
-      localStorage.setItem('selData2', this.keyValue);
-      this.$router.push({ name: 'SelPage' });
+      const editPage = localStorage.getItem('editPage');
+
+      if (editPage == 'AddrPage') {
+        localStorage.setItem('selData2', this.keyValue);
+        localStorage.setItem('editPage', null);
+        this.$router.push({ name: 'OrderPage' });
+      } else {
+        localStorage.setItem('selData2', this.keyValue);
+        this.$router.push({ name: 'SelPage' });
+      }
     },
   }
 };

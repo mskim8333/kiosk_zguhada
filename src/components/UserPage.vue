@@ -27,7 +27,7 @@
           >
             <span class="keyInfo keySpace" v-if="key[shiftIndex] === 'space'">{{ key[shiftIndex] }}</span>
             <span class="keyInfo keySearch" v-else-if="key[shiftIndex] === 'search'">
-              <!--<img src="../assets/search.png" />-->검색
+              <!--<img src="../assets/search.png" />-->입력
             </span>
             <span class="keyInfo keyShift" v-else-if="key[shiftIndex] === 'Shift' && shiftIndex === 0">
               <img src="../assets/upper.png" />
@@ -61,28 +61,10 @@
       <button @click="toggleActive">확인</button>
     </div>
   </div>
-  <div :class="{ 'opa_bg': true, 'opa_hide': isActive }"></div>
-  <div :class="{ 'opa_alert': true, 'opa_hide': isActive }">
-    <div class="opa_alert_top">
-      <span>{{ msg1 }}</span>
-      <button 
-        class="opa_btn">
-        
-      </button>
-      <button 
-        class="opa_btn">
-        
-      </button>
-    </div>
-    <div class="opa_close" @click="toggleActive">
-      <img src="../assets/closed.png">
-    </div>
-  </div>
 </template>
 
 <script>
 import { searchAddress } from '../api'
-import { getKioskProducts2 } from '../api/index';
 import KeyData from './keyData'
 const Hangul = require('hangul-js');
 export default {
@@ -93,11 +75,11 @@ export default {
     theme: String,
   },
   mounted() {
-    localStorage.setItem('addrData', null); // 주소 검색 결과 초기화
-    localStorage.setItem('addrInput', null); // 입력 주소 초기화
-    localStorage.setItem('guData', null); // 지자체 정보 초기화
-    localStorage.setItem('selData', null); // 주소 선택 정보 초기화
-    localStorage.setItem('selData2', null); // 상세 주소 입력 정보 초기화
+    // localStorage.setItem('addrData', null); // 주소 검색 결과 초기화
+    // localStorage.setItem('addrInput', null); // 입력 주소 초기화
+    // localStorage.setItem('guData', null); // 지자체 정보 초기화
+    // localStorage.setItem('selData', null); // 주소 선택 정보 초기화
+    // localStorage.setItem('selData2', null); // 상세 주소 입력 정보 초기화
   },
   data() {
     return {
@@ -115,7 +97,22 @@ export default {
   },
   methods: {
     handleNextClick() {
-      this.$router.push({ name: 'UserPage2' });
+      console.log(this.keyValue);
+      
+      if (this.keyValue) {
+        const editPage = localStorage.getItem('editPage');
+        if (editPage == 'UserPage') {
+          localStorage.setItem('editPage', null);
+          localStorage.setItem('userName', this.keyValue);
+          this.$router.push({ name: 'OrderPage' });
+        } else {
+          localStorage.setItem('userName', this.keyValue);
+          this.$router.push({ name: 'UserPage2' });
+        }
+      } else {
+        this.msg1 = '신청인의 이름을 입력해주세요.';
+        this.isActive = false;
+      }
     },
     async fetchSearchAddress () {
       console.log('실행')
@@ -169,7 +166,8 @@ export default {
     async keyEvent (key) {
       switch (key) {
         case 'search':
-          this.fetchSearchAddress()
+          //this.fetchSearchAddress()
+          this.handleNextClick()
           break;
         case 'Shift':
         case 'CapsLock':

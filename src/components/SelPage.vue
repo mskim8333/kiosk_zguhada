@@ -23,16 +23,19 @@
         <img class="arrow" alt="logo" src="../assets/circle_left.png">
       </span>
       <div class="cate_content">
-        <button class="active">
+        <button 
+          @click="tabClick(-1, -1)"
+          :class="{ 'active': selectedIndex === -1 }">
           전체
         </button>
-        <button class="">가구</button>
-        <button class="">가전제품</button>
-        <button class="">생활용품</button>
-        <button class="">사무/업소용품</button>
-        <button class="">스포츠/취미용품</button>
-        <button class="">유아/아동용품</button>
-        <button class="">기타</button>
+        <button 
+          v-for="(item, index) in productList" 
+          :key="index" 
+          @click="tabClick(item.id, index)"
+          :class="{ 'active': selectedIndex === index }"
+        >
+          {{ item.name }}
+        </button>
       </div>
       <span class="cate_right">
         <img class="arrow" alt="logo" src="../assets/circle_right.png">
@@ -40,104 +43,82 @@
     </div>
 
     <div class="cate_item">
-      <div class="cate_item_row">
-        <button class="item" @click="() => selProduct()">
-          <img alt="logo" src="../assets/p1.png">
-          <span>장롱/옷장</span>
-        </button>
-        <button class="item">
-          <img alt="logo" src="../assets/p2.png">
-          <span>소파</span>
-        </button>
-        <button class="item">
-          <img alt="logo" src="../assets/p3.png">
-          <span>장식장/진열장</span>
-        </button>
-        <button class="item">
-          <img alt="logo" src="../assets/p4.png">
-          <span>옷장</span>
-        </button>
-      </div>
-      <div class="cate_item_row">
-        <button class="item">
-          <img alt="logo" src="../assets/p5.png">
-          <span>화장대/협탁</span>
-        </button>
-        <button class="item">
-          <img alt="logo" src="../assets/p6.png">
-          <span>싱크대/선반</span>
-        </button>
-        <button class="item">
-          <img alt="logo" src="../assets/p7.png">
-          <span>조명</span>
-        </button>
-        <button class="item">
-          <img alt="logo" src="../assets/p8.png">
-          <span>서랍정/수납장</span>
-        </button>
-      </div>
-    </div>
+      <swiper
+        :pagination="true"
+        :modules="modules"
+        class="mySwiper"
+      >
+        <swiper-slide
+            v-for="(item, index) in selCategory" 
+            :key="index"
+        >
+          <div class="cate_item_row"
+            v-for="(item2, index2) in item" 
+            :key="index2"
+          >
+            <button class="item"
+              v-for="(item3, index3) in item2"
+              :key="index3"
+              @click="() => selProduct(item3)"
+            >
+              <img alt="logo" :src="require(`../assets/4/svg/${item3.zguhada_icon}.svg`)">
+              <span>{{ item3.name }}</span>
+            </button>
+          </div>
+        </swiper-slide>
+      </swiper>
 
-    <div class="cate_row">
-      <span class="cate_left2">
-        <img class="arrow" alt="logo" src="../assets/circle_left.png">
-      </span>
-      <div class="cate_content2">
-        <img class="dot" alt="logo" src="../assets/dot_active.png">
-        <img class="dot" alt="logo" src="../assets/dot.png">
-        <img class="dot" alt="logo" src="../assets/dot.png">
+      <div class="cate_row_abs">
+        <div class="cate_row">
+          <span class="cate_left2">
+            <img class="arrow" alt="logo" src="../assets/circle_left.png">
+          </span>
+          <div class="cate_content2">
+          </div>
+          <span class="cate_right2">
+            <img class="arrow" alt="logo" src="../assets/circle_right.png">
+          </span>
+        </div>
       </div>
-      <span class="cate_right2">
-        <img class="arrow" alt="logo" src="../assets/circle_right.png">
-      </span>
     </div>
 
     <div class="order_list">
-      <div class="order_row">
+      <div class="order_row"
+        v-for="(item, index) in orderProducts" 
+        :key="index"
+      >
         <div class="order_box">
-          <span class="order_title">돗자리/모든규격</span>
+          <span class="order_title">{{ item.name }}</span>
           <div class="order_num">
-            <img class="order_plus" src="../assets/plus.png">
-            <div class="order_qty">1</div>
-            <img class="order_minus" src="../assets/minus.png">
+            <img 
+              class="order_plus"
+              @click="() => qtyChange(index, 1)"
+              src="../assets/plus.png"
+            >
+            <div class="order_qty">{{ item.qty }}</div>
+            <img
+              class="order_minus"
+              @click="() => qtyChange(index, -1)"
+              src="../assets/minus.png"
+            >
           </div>
-
           <div class="order_delete">
-            <img src="../assets/closed.png">
+            <img src="../assets/closed.png" @click="() => deleteOrder(index)">
           </div>
-          <span class="order_amt">3,000원</span>
-          
+          <span class="order_amt">{{ comma(item.total) }}원</span>
         </div>
       </div>
-
-      <div class="order_row">
-        <div class="order_box">
-          <span class="order_title">방충망/소</span>
-          <div class="order_num">
-            <img class="order_plus" src="../assets/plus.png">
-            <div class="order_qty">1</div>
-            <img class="order_minus" src="../assets/minus.png">
-          </div>
-
-          <div class="order_delete">
-            <img src="../assets/closed.png">
-          </div>
-          <span class="order_amt">5,000원</span>
-          
-        </div>
-      </div>
-      
     </div>
 
     <div class="bottom_content">
       <div class="left_info">
         <div class="info_row">
           <span class="info_title">선택한 품목</span>
-          <span class="info_content"><p>0</p>개</span>
+          <span class="info_content"><p>{{ totalQty }}</p>개</span>
         </div>
         <div class="info_row">
           <span class="info_title">결제금액</span>
-          <span class="info_content"><p>0</p>원</span>
+          <span class="info_content"><p>{{ comma(totalPrice) }}</p>원</span>
         </div>
       </div>
       <button class="info_btn" @click="tempNext">선택완료</button>
@@ -149,12 +130,15 @@
     <div class="opa_alert_top">
       <span>{{ msg1 }}</span>
       <button 
-        class="opa_btn">
-        자개장롱
-      </button>
-      <button 
-        class="opa_btn">
-        장롱
+        v-for="(item, index) in selCategory2" 
+        :key="index"
+        class="opa_btn"
+        :class="{ 'l_row': selCategory2.length > 4, 'l_row2': selCategory2.length > 8 }"
+        @click="() => selProduct(item)"
+      >
+        <span v-if="!item.price">{{ item.name }}</span>
+        <span v-if="item.price" class="order">{{ item.name }}</span>
+        <p v-if="item.price" class="order">{{ comma(item.price) }}</p>
       </button>
     </div>
     <div class="opa_close" @click="toggleActive">
@@ -165,54 +149,176 @@
 
 <script>
 import { getKioskProducts2 } from '../api/index';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper/modules';
 
 export default {
   name: 'SelPage',
+  components: {
+    Swiper,
+    SwiperSlide,
+  },
+  setup() {
+    return {
+      modules: [Pagination],
+    };
+  },
   props: {
   },
   data() {
     return {
       productList: [], // 상품 리스트를 저장할 변수 추가
       productList2: [], // 상품 리스트를 저장할 변수 추가2
+      selCategory: [], // 선택된 카테고리
+      selCategory2: [], // 선택된 품목(depth:2~)
+      orderProducts: [], // 규격을 선택한 품목
+      totalQty: 0, // 선택된 품목수
+      totalPrice: 0, // 선택된 품목의 총 금액
       guData: [],
       addr: '',
       isActive: true,
       msg1: '',
+      selectedIndex: -1,
     };
   },
   async mounted() {
     try {
       const data = localStorage.getItem('guData');
-      console.log(data);
       if (data) {
         this.guData = JSON.parse(data);
-        console.log(this.guData.id);
       }
       
       const kioskToken = '20bcde59e4221e514a49326b0d4e5b74';
       const response = await getKioskProducts2(kioskToken, '', '', 1, this.guData.id);
-      const filteredData = (response).filter(item => item.service_government_id == this.guData.id);
-      console.log(filteredData);
-      this.productList2 = JSON.parse(JSON.stringify(filteredData));
+      if (response) {      
+        this.productList = await response;
+        console.log(this.productList);
+        this.tabClick(-1, -1);
+      }
 
     } catch (error) {
       console.error('상품 정보를 가져오는 중 오류 발생:', error);
     }
   },
   methods: {
-    selProduct() {
+    selProduct(item) {
+      console.log(item);
       console.log('클릭');
-      this.msg1 = '장롱의 종류를 선택해주세요.';
-      this.isActive = false;
+      if (item.products) {
+        //console.log(item.products);
+        this.selCategory2 = item.products;
+        this.msg1 = item.name + '의 종류를 선택해주세요.';
+        this.isActive = false;
+      } else if (item.product_standards) {
+        //console.log(item.product_standards);
+        this.selCategory2 = item.product_standards;
+        this.msg1 = '규격을 선택해주세요.';
+        this.isActive = false;
+      } else if (item.price) {
+        console.log('주문 추가');
+        const filteredData = (this.orderProducts).filter(order_item => order_item.id == item.id);
+        let temp = item;
+        temp.qty = 1;
+        temp.total = Number(temp.qty) * Number(temp.price);
+        if(filteredData.length == 0) {
+          (this.orderProducts).push(temp);
+        }
+        this.calcTotal();
+        //console.log(filteredData);
+        console.log(this.orderProducts);
+        this.isActive = true;
+      }
+      
     },
     toggleActive() {
       this.isActive = true;
     },
     tempNext() {
-      this.$router.push({ name: 'UserPage' });
+
+      const editPage = localStorage.getItem('editPage');
+
+      if (editPage == 'SelPage') {
+        localStorage.setItem('editPage', null);
+        localStorage.setItem('orderData', JSON.stringify(this.orderProducts));
+        this.$router.push({ name: 'OrderPage' });
+      } else {
+        localStorage.setItem('orderData', JSON.stringify(this.orderProducts));
+        this.$router.push({ name: 'UserPage' });
+      }
+
+    },
+    tabClick(id, index) {
+      this.selectedIndex = index;
+      if (id === -1) {
+        console.log('전체');
+        let arr = [];
+        for(const item of this.productList) {
+          arr = arr.concat(item.middle_categories);
+        }
+        console.log(arr);
+        let page = this.chunkArray(arr, 4);
+
+        this.selCategory = this.chunkArray(page, 2);
+        console.log(this.selCategory);
+      } else {
+        for(const item of this.productList) {
+          if(item.id === id) {
+            console.log(item.id);
+            console.log(item.name);
+
+            let arr = item.middle_categories;
+            let page = this.chunkArray(arr, 4);
+
+            this.selCategory = this.chunkArray(page, 2);
+            console.log(this.selCategory);
+
+            break;
+          }
+        }
+      }
+    },
+    chunkArray(array, size) {
+      const result = [];
+      for (let i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size));
+      }
+      return result;
+    },
+    comma(val){
+      return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    qtyChange(idx, num) {
+      const price = this.orderProducts[idx].price;
+      const qty = this.orderProducts[idx].qty;
+      if (qty + num > 0) {
+        this.orderProducts[idx].qty = qty + num;
+        this.orderProducts[idx].total = (qty + num) * price;
+
+        this.calcTotal();
+      } else {
+        return false;
+      }
+    },
+    calcTotal() {
+      let qty = 0;
+      let total = 0;
+      for (const item of this.orderProducts) {
+        //qty = qty + item.qty;
+        qty++;
+        total = total + item.total;
+      }
+      this.totalQty = qty;
+      this.totalPrice = total;
+    },
+    deleteOrder(idx) {
+      (this.orderProducts).splice(idx, 1);
+      this.calcTotal();
     }
-  }, 
+  },
 };
+
 </script>
 
 <style scoped>
@@ -281,6 +387,8 @@ export default {
   padding-top: 20px;
 }
 .cate_item {
+  position: relative;
+  min-height: 50vw;
   margin: 20px 0px 0px;
   border-top: 1px solid #EDEDED;
   /* border-bottom: 1px solid #EDEDED; */
@@ -291,6 +399,7 @@ export default {
 .cate_item_row {
   display: block;
   overflow: hidden;
+  height: 25vw;
 }
 
 .cate_item_row button.item {
@@ -315,7 +424,12 @@ export default {
   margin: 0px 0px 50px;
   font-weight: 600;
 }
-
+.cate_row_abs {
+  position: absolute;
+  left: 0px;
+  bottom: 15px;
+  width: 100%;
+}
 .cate_row {
   position: relative;
 }
@@ -325,6 +439,7 @@ export default {
   margin: 10px 80px;
 }
 .cate_content2 {
+  height: 30px;
   text-align: center;
   display:block;
   margin: 10px 80px;
@@ -619,12 +734,15 @@ h3 {
   overflow: hidden;
   position: fixed;
   width: 70%;
-  height: 40%;
-  left: 15%;
-  top: 32%;
+  min-height: 40%;
+  max-height: 80%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   background-color: #FFFFFF;
-  border-radius: 4%;
+  border-radius: 5vw;
   z-index: 9999;
+  padding-bottom: 30px;
 }
 .opa_alert_top {
   width: 100%;
@@ -665,5 +783,39 @@ h3 {
   color: #2C2C2C;
   font-weight: 400;
   margin: 10px 0;
+}
+.opa_btn.l_row {
+  height: 140px;
+  line-height: 140px;
+  font-size: 28px;
+}
+.opa_btn.l_row2 {
+  height: 100px;
+  line-height: 100px;
+  font-size: 28px;
+}
+
+.opa_btn span {
+  margin: 0px;
+  padding: 0px;
+}
+.opa_btn span {
+  margin: 0px;
+  padding: 0px;
+}
+span.order {
+  display: block;
+  text-align: left;
+  margin: 10px 0px 0px;
+  padding: 10px 0px 10px 20px;
+  line-height: 34px;
+}
+p.order {
+  display: block;
+  text-align: left;
+  line-height: 34px;
+  color: #767676;
+  padding: 10px 0px 10px 20px;
+  margin: 0px;
 }
 </style>

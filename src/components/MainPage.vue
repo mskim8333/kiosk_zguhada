@@ -75,6 +75,9 @@ export default {
     }
 
   },
+  mounted() {
+    localStorage.setItem('editPage', null);
+  },
   data() {
     return {
     }

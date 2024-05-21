@@ -14,27 +14,28 @@
     <div class="card">
       <div class="card_title">
         <p>신청인</p>
-        <span>홍길동</span>
-        <img class="top_btn" src="../assets/arrow_right.png">
+        <span>{{ userName }}</span>
+        <img class="top_btn" src="../assets/arrow_right.png" @click="editContents('UserPage')">
       </div>
     </div>
     <div class="card">
       <div class="card_title">
         <p>연락처</p>
-        <span>010-1234-1234</span>
-        <img class="top_btn" src="../assets/arrow_right.png">
+        <span>{{ userTel }}</span>
+        <img class="top_btn" src="../assets/arrow_right.png" @click="editContents('UserPage2')">
       </div>
     </div>
     <div class="card">
       <div class="card_title">
         <p>주소지</p>
         <span></span>
-        <img class="top_btn" src="../assets/arrow_right.png">
+        <img class="top_btn" src="../assets/arrow_right.png" @click="editContents('AddrPage')">
       </div>
       <div class="card_content">
-        서울 성동구 성수이로 51, 101동 앞
+        {{ addr }} {{ userAddr2 }}
       </div>
     </div>
+    <!--
     <div class="card">
       <div class="card_title">
         <p>배출 일자</p>
@@ -42,33 +43,33 @@
         <img class="top_btn" src="../assets/arrow_right.png">
       </div>
     </div>
+    -->
     <div class="card">
       <div class="card_title">
         <p>배출품목</p>
         <span></span>
-        <img class="top_btn" src="../assets/arrow_right.png">
+        <img class="top_btn" src="../assets/arrow_right.png" @click="editContents('SelPage')">
       </div>
-      <div class="card_content2">
-        <div class="left_content">돗자리/모든규격</div>
+
+      <div 
+        class="card_content2"
+        v-for="(item, index) in orderProducts" 
+        :key="index"
+      >
+        <div class="left_content">{{ item.name }}</div>
         <div class="right_content">
-          <span>1개</span>
-          <p>3,000</p>
+          <span>{{ item.qty }}개</span>
+          <p>{{ comma(item.total) }}</p>
         </div>
       </div>
-      <div class="card_content2">
-        <div class="left_content">돗자리/모든규격</div>
-        <div class="right_content">
-          <span>1개</span>
-          <p>3,000</p>
-        </div>
-      </div>
+
     </div>
 
     <div class="bottom_content">
       <div class="left_info">
         <div class="info_row">
           <span class="info_title">결제금액</span>
-          <span class="info_content"><p>8,000</p>원</span>
+          <span class="info_content"><p>{{ comma(total) }}</p>원</span>
         </div>
       </div>
       <button class="info_btn" @click="completeNext">결제</button>
@@ -97,20 +98,73 @@
 
 
 <script>
-import { getKioskProducts2 } from '../api/index';
+// const data = JSON.parse(localStorage.getItem('selData'));
+// const data = JSON.parse(localStorage.getItem('selData2'));
 export default {
   name: 'AddrPage',
   props: {
   },
   data() {
     return {
-      addr: '',
+      addr: null,
+      userName: null,
+      userTel: null,
+      userAddr: null,
+      userAddr2: null,
+      guData: [],
+      orderProducts: [],
+      qty: 0,
+      total: 0,
     };
+  },
+  mounted() {
+
+    const selData = JSON.parse(localStorage.getItem('selData'));
+    const selData2 = localStorage.getItem('selData2');
+    const guData = JSON.parse(localStorage.getItem('guData'));
+    const orderData = JSON.parse(localStorage.getItem('orderData'));
+    const nameData = localStorage.getItem('userName');
+    const telData = localStorage.getItem('userTel');
+
+    this.userAddr = selData;
+    this.userAddr2 = selData2;
+    this.userName = nameData;
+    this.userTel = telData;
+    this.guData = guData;
+    this.orderProducts = orderData;
+    if (selData.address.address_name) {
+      this.addr = selData.address.address_name;
+    }
+
+    this.calcTotal();
+
   },
   methods: {
     completeNext() {
       this.$router.push({ name: 'MainPage' });
-    }
+    },
+    comma(val){
+      return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    calcTotal() {
+      console.log('출력');
+      console.log(this.orderProducts);
+      let qty = 0;
+      let total = 0;
+      for (const item of this.orderProducts) {
+        //qty = qty + item.qty;
+        qty++;
+        total = total + item.total;
+      }
+      this.qty = qty;
+      this.total = total;
+      console.log(this.qty);
+      console.log(this.total);
+    },
+    editContents(page) {
+      localStorage.setItem('editPage', page);
+      this.$router.push({ name: page });
+    },
   }
 };
 </script>

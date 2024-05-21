@@ -327,14 +327,18 @@ export async function getKioskProducts(kioskToken, search, ordering, page) {
   }
 }
 
-export async function getKioskProducts2(kioskToken, search, ordering, page, gid) {
+export async function getKioskProducts2(kioskToken, search, ordering, page, gid) { // eslint-disable-line no-unused-vars
   try {
-    console.log(gid);
+    //console.log(gid);
     const response = await axios.get(`${apiUrl}/zguhada/kiosk/products/`, {
       headers: { 'kiosk-token': kioskToken },
       params: { search, ordering, page }
     });
-    return response.data;
+    const filteredData = (response.data).filter(item => item.service_government_id == gid);
+    //console.log(filteredData);
+    //console.log(response.data);
+    //return response.data;
+    return filteredData[0].categories;
   } catch (error) {
     console.error('키오스크에 맞는 품목 전체 조회 중 오류 발생:', error);
     throw error;
@@ -348,6 +352,7 @@ export async function getKioskProducts2(kioskToken, search, ordering, page, gid)
  * @typedef {Object} KioskConfig
  * @property {boolean} service_on - 서비스 가능 여부
  */
+
 export async function getKioskServiceStatus(kioskToken) {
   try {
     const response = await axios.get(`${apiUrl}/zguhada/kiosk/service-status/`, {

@@ -1,7 +1,7 @@
 <template>
   <div class="addrpage">
     <div class="top_row">
-      <router-link to="/sel">
+      <router-link to="/user">
         <img class="top_btn" alt="logo" src="../assets/back.png">
       </router-link>
       <router-link to="/">
@@ -61,28 +61,10 @@
       <button @click="toggleActive">확인</button>
     </div>
   </div>
-  <div :class="{ 'opa_bg': true, 'opa_hide': isActive }"></div>
-  <div :class="{ 'opa_alert': true, 'opa_hide': isActive }">
-    <div class="opa_alert_top">
-      <span>{{ msg1 }}</span>
-      <button 
-        class="opa_btn">
-        
-      </button>
-      <button 
-        class="opa_btn">
-        
-      </button>
-    </div>
-    <div class="opa_close" @click="toggleActive">
-      <img src="../assets/closed.png">
-    </div>
-  </div>
 </template>
 
 <script>
 import { searchAddress } from '../api'
-import { getKioskProducts2 } from '../api/index';
 import KeyData from './keyData'
 const Hangul = require('hangul-js');
 export default {
@@ -93,11 +75,11 @@ export default {
     theme: String,
   },
   mounted() {
-    localStorage.setItem('addrData', null); // 주소 검색 결과 초기화
-    localStorage.setItem('addrInput', null); // 입력 주소 초기화
-    localStorage.setItem('guData', null); // 지자체 정보 초기화
-    localStorage.setItem('selData', null); // 주소 선택 정보 초기화
-    localStorage.setItem('selData2', null); // 상세 주소 입력 정보 초기화
+    // localStorage.setItem('addrData', null); // 주소 검색 결과 초기화
+    // localStorage.setItem('addrInput', null); // 입력 주소 초기화
+    // localStorage.setItem('guData', null); // 지자체 정보 초기화
+    // localStorage.setItem('selData', null); // 주소 선택 정보 초기화
+    // localStorage.setItem('selData2', null); // 상세 주소 입력 정보 초기화
   },
   data() {
     return {
@@ -115,7 +97,16 @@ export default {
   },
   methods: {
     handleNextClick() {
-      this.$router.push({ name: 'OrderPage' });
+      console.log(this.keyValue);
+      //this.$router.push({ name: 'OrderPage' });
+      localStorage.setItem('editPage', null);
+      if (this.keyValue) {
+        localStorage.setItem('userTel', this.keyValue);
+        this.$router.push({ name: 'OrderPage' });
+      } else {
+        this.msg1 = '신청인의 연락처를 입력해주세요.';
+        this.isActive = false;
+      }
     },
     async fetchSearchAddress () {
       console.log('실행')
