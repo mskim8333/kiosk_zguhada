@@ -72,7 +72,7 @@
           <span class="info_content"><p>{{ comma(total) }}</p>원</span>
         </div>
       </div>
-      <button class="info_btn" @click="completeNext">결제</button>
+      <button class="info_btn" @click="procPay">결제</button>
     </div>
     
   </div>
@@ -98,8 +98,8 @@
 
 
 <script>
-// const data = JSON.parse(localStorage.getItem('selData'));
-// const data = JSON.parse(localStorage.getItem('selData2'));
+import { createLargeWasteRequest, createPaymentRequest, createPaymentApprove } from '../api/index';
+
 export default {
   name: 'AddrPage',
   props: {
@@ -115,6 +115,45 @@ export default {
       orderProducts: [],
       qty: 0,
       total: 0,
+      serGovId: null,
+      approve_data: {},
+      pay_data: {
+        "app": "zguhada",
+        "amount": 0,
+        "item_title": null,
+        "buyer_name": null,
+        "buyer_tel": null,
+        "tax_free": 0,
+        "installment": 99,
+        "v_bank_exp": null,
+        "cp_ci": 0,
+        "buyer_email": null,
+        "finish_url": null,
+        "wb_success_scheme": null,
+        "wb_error_scheme": null,
+        "is_mobile": false
+      },
+      api_data: {
+        "name": "",
+        "cellphone": "",
+        "postcode_json": {},
+        "detail_address": "",        
+        "dispose_location_id": 0,
+        "registered_location_id": 0,
+        "payment_method": "CD",
+        "channel": "zg_kiosk",
+        "dispose_date": "2024-05-28",
+        "item_list": [],
+        "upload_images": [],
+        "payment_id": null,
+        //"dispose_memo": "",
+        //"complain_type": "ID",
+        //"complain_memo": "string",
+        //"complain_before_image_id": "string",
+        //"complain_after_image_id": "string",
+        //"cash_receipt_type": 0,
+        //"cash_receipt_number": ""
+      }
     };
   },
   mounted() {
@@ -126,29 +165,137 @@ export default {
     const nameData = localStorage.getItem('userName');
     const telData = localStorage.getItem('userTel');
 
+    console.log(guData);
+
     this.userAddr = selData;
     this.userAddr2 = selData2;
     this.userName = nameData;
+    
     this.userTel = telData;
     this.guData = guData;
     this.orderProducts = orderData;
+
+    let item_list = [];
+
+    for(const temp_item of orderData) {
+      let temp_arr = {
+        product_standard_id: temp_item.id,
+        quantity: temp_item.qty,
+        unit_price: temp_item.price,
+      }
+      item_list.push(temp_arr);
+    }
+
     if (selData.address.address_name) {
       this.addr = selData.address.address_name;
     }
+
+    this.api_data.name = nameData;
+    this.api_data.cellphone = telData;
+    this.api_data.postcode_json = selData;
+    this.api_data.detail_address = selData2;        
+    this.api_data.dispose_location_id = null;
+    this.api_data.registered_location_id = null;
+    this.api_data.payment_method = "CD";
+    this.api_data.channel = "zg_kiosk";
+    this.api_data.dispose_date = "2024-05-23";
+    this.api_data.item_list = item_list;
+    this.api_data.upload_images = [];
+    this.serGovId = guData.id;
 
     this.calcTotal();
 
   },
   methods: {
-    completeNext() {
-      this.$router.push({ name: 'MainPage' });
+    async procPay() {
+
+      // createPaymentApprove(paymentMethodId, paymentId, accId, accSec, data)
+      try {
+        this.pay_data.amount = this.total;
+        this.pay_data.item_title = this.guData.name + ' 대형생활폐기물 결제';
+        this.pay_data.buyer_name = this.userName;
+        this.pay_data.buyer_tel = this.userTel;
+
+        const payData = this.pay_data;
+        console.log(JSON.stringify(payData));
+
+        const paymentMethodId = this.guData.kiosk_payment_method_id;
+        const accId = this.guData.payment_account_id;
+        const accSec = this.guData.payment_secret_key;
+        
+        const response = await createPaymentRequest(paymentMethodId, accId, accSec, payData);
+
+        if (response.payment_id) {
+          this.api_data.payment_id = response.payment_id;
+          console.log(response);
+          this.procAppove();
+        }
+
+      } catch (error) {
+        console.error('결제 정보를 가져오는 중 오류 발생:', error);
+      }
+    },
+    async procAppove() {
+
+      // createPaymentApprove(paymentMethodId, paymentId, accId, accSec, data)
+      try {
+
+        const data = this.approve_data;
+        //console.log(JSON.stringify(data));
+
+        const paymentMethodId = this.guData.kiosk_payment_method_id;
+        const accId = this.guData.payment_account_id;
+        const accSec = this.guData.payment_secret_key;
+        const paymentId = this.api_data.payment_id;
+        
+        const response = await createPaymentApprove(paymentMethodId, paymentId, accId, accSec, data);
+
+        console.log('출력');
+
+        // if (response) {
+        //   console.log(response);
+        //   this.completeNext();
+        // } else {
+        //   this.completeNext();
+        // }
+        console.log(response);
+        this.completeNext();
+
+      } catch (error) {
+        console.error('Approve 정보를 가져오는 중 오류 발생:', error);
+      }
+      },
+    async completeNext() {
+      console.log('원장 저장');
+      try {
+        const data = this.api_data;
+        console.log(JSON.stringify(data));
+        
+        const kioskToken = '20bcde59e4221e514a49326b0d4e5b74';
+        const serGovId = this.serGovId;
+        const response = await createLargeWasteRequest(serGovId, data, kioskToken);
+
+        if (response) {
+          console.log('원장 정보 저장 결과');
+          console.log(response);
+          this.$router.push({ name: 'MainPage' });
+        }
+
+      } catch (error) {
+        console.error('정보를 가져오는 중 오류 발생:', error);
+      }
+
+
+
+
+      //this.$router.push({ name: 'MainPage' });
     },
     comma(val){
       return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     calcTotal() {
-      console.log('출력');
-      console.log(this.orderProducts);
+      // console.log('출력');
+      // console.log(this.orderProducts);
       let qty = 0;
       let total = 0;
       for (const item of this.orderProducts) {
@@ -158,8 +305,8 @@ export default {
       }
       this.qty = qty;
       this.total = total;
-      console.log(this.qty);
-      console.log(this.total);
+      // console.log(this.qty);
+      // console.log(this.total);
     },
     editContents(page) {
       localStorage.setItem('editPage', page);

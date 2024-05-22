@@ -15,10 +15,10 @@ const apiUrl = 'https://backend-dev.soogobot.com/api';
  * @property {string} order_id - 주문 ID
  * @property {number} amount - 결제 금액
  */
-export async function createPaymentRequest(paymentMethodId, data, kioskToken) {
+export async function createPaymentRequest(paymentMethodId, accId, accSec, data) {
   try {
     const response = await axios.post(`${apiUrl}/payment/${paymentMethodId}/request/`, data, {
-      headers: { 'kiosk-token': kioskToken }
+      headers: { 'X-Chunil-Payment-Id': accId, 'X-Chunil-Payment-Secret': accSec }
     });
     return response.data;
   } catch (error) {
@@ -59,10 +59,10 @@ export async function getPaymentInfo(paymentMethodId, paymentId, kioskToken) {
  * @param {string} kioskToken - 키오스크 인증 토큰
  * @returns {Promise<Object>} - 응답 데이터
  */
-export async function createPaymentApprove(paymentMethodId, paymentId, data, kioskToken) {
+export async function createPaymentApprove(paymentMethodId, paymentId, accId, accSec, data) {
   try {
     const response = await axios.post(`${apiUrl}/payment/${paymentMethodId}/${paymentId}/approve/`, data, {
-      headers: { 'kiosk-token': kioskToken }
+      headers: { 'X-Chunil-Payment-Id': accId, 'X-Chunil-Payment-Secret': accSec }
     });
     return response.data;
   } catch (error) {
