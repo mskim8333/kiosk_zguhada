@@ -12,7 +12,7 @@ import SignIn from '../components/SignIn.vue';
 import TempPage from '../components/TempPage.vue';
 import UserPage from '../components/UserPage.vue';
 import UserPage2 from '../components/UserPage2.vue';
-
+import DatePage from '../components/DatePage.vue';
 
 
 
@@ -46,6 +46,11 @@ const routes = [
     path: '/sel',
     name: 'SelPage',
     component: SelPage
+  },
+  {
+    path: '/date',
+    name: 'DatePage',
+    component: DatePage
   },
   {
     path: '/signin',

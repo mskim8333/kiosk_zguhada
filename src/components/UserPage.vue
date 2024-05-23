@@ -1,7 +1,7 @@
 <template>
   <div class="addrpage">
     <div class="top_row">
-      <router-link to="/sel">
+      <router-link to="/date">
         <img class="top_btn" alt="logo" src="../assets/back.png">
       </router-link>
       <router-link to="/">

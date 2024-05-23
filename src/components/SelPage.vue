@@ -245,7 +245,7 @@ export default {
         this.$router.push({ name: 'OrderPage' });
       } else {
         localStorage.setItem('orderData', JSON.stringify(this.orderProducts));
-        this.$router.push({ name: 'UserPage' });
+        this.$router.push({ name: 'DatePage' });
       }
 
     },
