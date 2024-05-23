@@ -12,13 +12,13 @@
     <h3>배출하실 날짜를 선택해주세요.</h3>
     
     <div class="cate_row">
-      <span class="cate_left">
+      <span class="cate_left" @click="prevCk">
         <img class="arrow" src="../assets/circle_left.png">
       </span>
       <div class="cate_content">
-        2024년 4월
+        {{ currentYear }}년 {{ currentMonth+1 }}월
       </div>
-      <span class="cate_right">
+      <span class="cate_right" @click="nextCk">
         <img class="arrow" src="../assets/circle_right.png">
       </span>
     </div>
@@ -33,14 +33,31 @@
         <span>금</span>
         <span>토</span>
       </div>
-      <div class="cld_content">
-
+      <div class="cld_row"
+        v-for="(item, index) in week" 
+        :key="index"
+      >
+        <span
+          v-for="(item2, index2) in item" 
+          :key="index2"          
+        >
+          <p
+            v-if="this.currentYear > this.year || (this.currentYear >= this.year && this.currentMonth > this.month) || (this.currentYear >= this.year && this.currentMonth == this.month && item2 >= this.date)"
+            @click="selProc(item2)"
+            :class="{active: this.currentYear == this.selYear && this.currentMonth == this.selMonth && this.selDate == item2}"
+          >
+            {{ item2 }}
+          </p>
+          <p
+            class="inactive"
+            v-else
+          >
+            {{ item2 }}
+          </p>
+        </span>
       </div>
     </div>
   </div>
-
-
-
 
   <div class="bottom_content">
 
@@ -97,6 +114,9 @@ export default {
       today: null,
       currentMonth: null,
       currentYear: null,
+      seltMonth: null,
+      selYear: null,
+      selDate: null,
     };
   },
   created() {
@@ -106,13 +126,51 @@ export default {
     this.date = this.today.getDate();
     this.currentMonth = this.month;
     this.currentYear = this.year;
-    console.log(this.year);
-    console.log(this.month);
-    console.log(this.date);
+    this.selMonth = this.month;
+    this.selYear = this.year;
+    this.selDate = this.date;
     this.getDates(); // 달력의 전체 날짜를 출력하는 함수
+
+    this.selValue();
   },
   methods: {
-    getFirstAndLastDate(month, year){
+    prevCk() {
+      if (this.currentMonth == 0) {
+        this.currentYear = this.currentYear - 1;
+        this.currentMonth = 11;
+      } else {
+        this.currentMonth = this.currentMonth - 1;
+      }
+      this.getDates();
+    },
+    nextCk() {
+      if (this.currentMonth == 11) {
+        this.currentYear = this.currentYear + 1;
+        this.currentMonth = 0;
+      } else {
+        this.currentMonth = this.currentMonth + 1;
+      }
+      this.getDates();
+    },
+    selProc(date) {
+      this.selYear = this.currentYear;
+      this.selMonth = this.currentMonth;
+      this.selDate = date;
+      this.getDates();
+      this.selValue();  
+    },
+    selValue() {
+      let month = this.selMonth;
+      let date = this.selDate;
+      if (month + 1 < 10) {
+        month = '0' + (month + 1);
+      }
+      if (date < 10) {
+        date = '0' + date;
+      }
+      this.keyValue = this.selYear + '-' + month + '-' + date;
+    },
+    getFirstAndLastDate(month, year) {
       const lastMonthLastDate = new Date(year, month, 0).getDate();
       const lastMonthLastDay = new Date(year, month, 0).getDay();
       const thisMonthLastDate = new Date(year, month+1, 0).getDate();
@@ -124,6 +182,8 @@ export default {
       const [lastMonthLastDate, lastMonthLastDay, thisMonthLastDate, nextMonthFirstDay] = this.getFirstAndLastDate(this.currentMonth, this.currentYear);
       console.log(lastMonthLastDate, lastMonthLastDay, thisMonthLastDate, nextMonthFirstDay);
 
+      this.week = [];
+
       const wk = Math.floor((thisMonthLastDate + lastMonthLastDay + 1) / 7) + 1; // 주차 카운트
       console.log('주차 : ' + wk);
       let start = 1;
@@ -132,38 +192,31 @@ export default {
       console.log(end);
       for (let i=0; i<wk; i++) {
 
-        let wk_arr = {};
-        for (let j=1; j<=7; j++) {
-          if (i == 0) {
-            for (let k=0; k<lastMonthLastDay; k++) {
+        let wk_arr = [];
+        if (i == 0) {
+          for (let k=0; k<=lastMonthLastDay; k++) {
+            wk_arr.push(null);
+          }
+          for (let j=lastMonthLastDay+1; j<7; j++) {
+            wk_arr.push(start);
+            start++;
+          }
+        } else {
+          for (let j=0; j<7; j++) {
+            if (start <= end) {
+              wk_arr.push(start);
+              start++;
+            } else {
               wk_arr.push(null);
             }
           }
         }
+
+        this.week.push(wk_arr);
       }
+
+      console.log(this.week);
     },
-    // getPrevMonth(prevLastDate, prevLastDay) { // 지난 달 마지막 주 출력
-    //   if(prevLastDay!==6){
-    //     for(let date = prevLastDate-prevLastDay; date <= prevLastDate; date++){
-    //         this.week.push(date);
-    //         this.checkLength();
-    //     }
-    //   }
-    // },
-    // getNextMonth(nextMonthFirstDay) { // 다음 달 첫째 주 출력
-    //   if(nextMonthFirstDay!==0){
-    //     for(let date = 1 ; date <= 7-nextMonthFirstDay; date++){
-    //       this.week.push(date);
-    //       this.checkLength();
-    //     }
-    //   }
-    // },
-    // getThisMonth(thisMonthLastDate) { // 이번 달 출력
-    //   for(let date = 1; date<=thisMonthLastDate; date++){
-    //     this.week.push(date);
-    //     this.checkLength();
-    //   }
-    // },
     handleNextClick() {
       console.log(this.keyValue);
       
@@ -174,7 +227,7 @@ export default {
           localStorage.setItem('userDate', this.keyValue);
           this.$router.push({ name: 'OrderPage' });
         } else {
-          localStorage.setItem('userName', this.keyValue);
+          localStorage.setItem('userDate', this.keyValue);
           this.$router.push({ name: 'UserPage' });
         }
       } else {
@@ -467,10 +520,37 @@ li {
  .cld_title {
   font-size: 30px;
   color: #767676;
+  margin: 80px 0px 40px 0px;
  }
  .cld_title span {
   display: inline-block;
   width: calc(100% / 7);
+ }
+ .cld_row {
+  font-size: 30px;
+  color: #2C2C2C;
+ }
+ .cld_row span {
+  line-height: 140px;
+  display: inline-block;
+  width: calc(100% / 7);
+ }
+ .cld_row span p {
+  margin: 0px;
+  padding: 0px;
+ }
+ .cld_row span p.active {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 30px;
+  background-color: #1E64FF;
+  color: #FFFFFF;
+  font-weight: 600;
+ }
+ .cld_row span p.inactive {
+  color: #999999;
  }
 
 </style>

@@ -35,15 +35,13 @@
         {{ addr }} {{ userAddr2 }}
       </div>
     </div>
-    <!--
     <div class="card">
       <div class="card_title">
         <p>배출 일자</p>
-        <span>2024-04-01</span>
-        <img class="top_btn" src="../assets/arrow_right.png">
+        <span>{{ api_data.dispose_date }}</span>
+        <img class="top_btn" src="../assets/arrow_right.png" @click="editContents('DatePage')">
       </div>
     </div>
-    -->
     <div class="card">
       <div class="card_title">
         <p>배출품목</p>
@@ -164,6 +162,7 @@ export default {
     const orderData = JSON.parse(localStorage.getItem('orderData'));
     const nameData = localStorage.getItem('userName');
     const telData = localStorage.getItem('userTel');
+    const userDate = localStorage.getItem('userDate');
 
     console.log(guData);
 
@@ -198,7 +197,7 @@ export default {
     this.api_data.registered_location_id = null;
     this.api_data.payment_method = "CD";
     this.api_data.channel = "zg_kiosk";
-    this.api_data.dispose_date = "2024-05-23";
+    this.api_data.dispose_date = userDate;
     this.api_data.item_list = item_list;
     this.api_data.upload_images = [];
     this.serGovId = guData.id;
