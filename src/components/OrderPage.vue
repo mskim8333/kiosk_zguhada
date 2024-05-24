@@ -76,20 +76,51 @@
   </div>
   <div :class="{ 'opa_bg': true, 'opa_hide': isActive }"></div>
   <div :class="{ 'opa_alert': true, 'opa_hide': isActive }">
-    <div class="opa_alert_top">
-      <span>{{ msg1 }}</span>
-      <button 
-        class="opa_btn">
-        
-      </button>
-      <button 
-        class="opa_btn">
-        
+    <div class="sc1" v-if="isSc1 == true">
+      <div class="opa_alert_top">
+        <span class="alert_title">{{ msg1 }}</span>
+        <p class="alert_sub_title">{{ msg2 }}</p>
+        <div class="opa_amt_wrap">
+          <span class="amt_left">총 결제 금액</span>
+          <span class="amt_right">원</span>
+          <span class="amt">{{ comma(total) }}</span>
+        </div>
+        <div class="video-player">
+          <video class="video" ref="video" autoplay loop>
+            <source src="@/assets/3.mp4" type="video/mp4">
+          </video>
+        </div>
+
+      </div>
+      <div class="opa_close" @click="toggleActive">
+        <img src="../assets/closed.png">
+      </div>
+    </div>
+    <div class="sc2" v-else-if="isSc2 == true">
+      <img class="f_btn" src="../assets/alert.svg">
+      <span class="alert_title">결제를 실패했어요.</span>
+      <div class="opa_amt_wrap">
+        <span class="amt_left">사유</span>
+        <span class="amt_right">카드 오류</span>
+      </div>
+      <button class="opa_close_bot" @click="toggleActive">
+        확인
       </button>
     </div>
-    <div class="opa_close" @click="toggleActive">
-      <img src="../assets/closed.png">
+    <div class="sc3" v-else-if="isSc3 == true">
+      <img class="f_btn" src="../assets/complete.svg">
+      <div class="opa_amt_wrap">
+        <span class="amt">{{ comma(total) }}</span>
+        <span class="amt_right">원 결제 완료</span>
+      </div>
+      <div class="complete_info">
+        카드를 빼주세요.<br />카드를 꺼내면 영수증이 출력됩니다.
+      </div>
+      <div class="opa_close" @click="toggleActive">
+        <img src="../assets/closed.png">
+      </div>
     </div>
+  
   </div>
 </template>
 
@@ -97,13 +128,25 @@
 
 <script>
 import { createLargeWasteRequest, createPaymentRequest, createPaymentApprove } from '../api/index';
+const { ipcRenderer } = require("electron");
 
 export default {
   name: 'AddrPage',
   props: {
   },
+  computed: {
+    videoElement () {
+      return this.$refs.video;
+    }
+  },
   data() {
     return {
+      isActive: true,
+      isSc1: true,
+      isSc2: false,
+      isSc3: false,
+      msg1: '카드를 끝까지 넣어주세요.',
+      msg2: '삼성페이는 결제 단말기에 태킹해주세요.',
       addr: null,
       userName: null,
       userTel: null,
@@ -151,6 +194,10 @@ export default {
         //"complain_after_image_id": "string",
         //"cash_receipt_type": 0,
         //"cash_receipt_number": ""
+      },
+      pg_data: {
+        MSGNO: '000000000001',
+        AMOUNT: '000001000',
       }
     };
   },
@@ -206,9 +253,52 @@ export default {
 
   },
   methods: {
-    async procPay() {
+    async procPay2() {
+      this.msg1 = "카드를 끝까지 넣어주세요.";
+      this.msg2 = "삼성페이는 결제 단말기에 태킹해주세요.";
+      this.isActive = false;
 
-      // createPaymentApprove(paymentMethodId, paymentId, accId, accSec, data)
+      let arr = {
+        AMOUNT: '000001000',
+        MSGNO: '000000000001',
+      }
+
+      this.pg_data.MSGNO = arr.MSGNO;
+      
+      let strTotal = this.total.toString();
+      let strTotalLen = strTotal.length;
+      let strZero = '';
+      for (let i=0;i < 9-strTotalLen; i++) {
+        strZero = '0' + strZero;
+      }
+      arr.AMOUNT = strZero + strTotal;
+      this.pg_data.AMOUNT = arr.AMOUNT
+
+      let payStart = await ipcRenderer.sendSync("synchronous-message", arr);
+      console.log('1' + payStart);
+      payStart = payStart.replace(/\r/g, '');
+      payStart = payStart.replace(/\n/g, '');      
+      console.log('2' + payStart);
+      payStart = JSON.parse(payStart);
+      return payStart;
+    },
+    getTime_YYMMDDHHMMSS() {
+      let today = new Date();
+
+      let year = today.getFullYear()
+      let month = ('0' + (today.getMonth() + 1)).slice(-2);
+      let day = ('0' + today.getDate()).slice(-2);
+              
+      let hours = ('0' + today.getHours()).slice(-2);
+      let minutes = ('0' + (today.getMinutes() + 1)).slice(-2);
+      let seconds = ('0' + today.getSeconds()).slice(-2);
+      
+      let time = year + month + day + hours + minutes + seconds;
+      
+      return time.slice(-12);		
+    },
+    async procPay() {
+      
       try {
         this.pay_data.amount = this.total;
         this.pay_data.item_title = this.guData.name + ' 대형생활폐기물 결제';
@@ -227,19 +317,35 @@ export default {
         if (response.payment_id) {
           this.api_data.payment_id = response.payment_id;
           console.log(response);
-          this.procAppove();
+
+          const pay_rt = await this.procPay2();
+
+          //if (pay_rt.ERROR_CHECK_RESULT == "S") {
+          if (pay_rt.indexOf('"ERROR_CHECK_RESULT":"S"') != -1) {
+            this.procAppove(JSON.stringify(pay_rt));
+          } else {
+            console.log('결제 실패');
+            this.isSc1 = false;
+            this.isSc2 = true;
+            this.isSc3 = false;
+          }
         }
 
       } catch (error) {
+        this.isSc1 = false;
+        this.isSc2 = true;
+        this.isSc3 = false;
         console.error('결제 정보를 가져오는 중 오류 발생:', error);
       }
+      
     },
-    async procAppove() {
+    async procAppove(payData) {
 
       // createPaymentApprove(paymentMethodId, paymentId, accId, accSec, data)
       try {
 
-        const data = this.approve_data;
+        //const data = this.approve_data;
+        const data = payData;
         //console.log(JSON.stringify(data));
 
         const paymentMethodId = this.guData.kiosk_payment_method_id;
@@ -277,7 +383,10 @@ export default {
         if (response) {
           console.log('원장 정보 저장 결과');
           console.log(response);
-          this.$router.push({ name: 'MainPage' });
+          this.isSc1 = false;
+          this.isSc2 = false;
+          this.isSc3 = true;
+          //this.$router.push({ name: 'MainPage' });
         }
 
       } catch (error) {
@@ -310,6 +419,9 @@ export default {
     editContents(page) {
       localStorage.setItem('editPage', page);
       this.$router.push({ name: page });
+    },
+    toggleActive() {
+      this.isActive = true;
     },
   }
 };
@@ -654,5 +766,192 @@ h3 {
   font-size: 20px;
   color: #767676;
   outline: none;
+}
+.opa_bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background-color: #000000;
+  opacity: 0.5;
+  z-index: 9998;
+}
+.opa_alert {
+  overflow: hidden;
+  position: fixed;
+  width: 70%;
+  min-height: 40%;
+  max-height: 80%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #FFFFFF;
+  border-radius: 5vw;
+  z-index: 9999;
+  padding-bottom: 30px;
+}
+.opa_alert_top {
+  width: 100%;
+  height: 100%;
+  font-size: 40px;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+}
+.opa_alert_top img {
+  display: inline-block;
+  margin: 15% 0 20px 0;
+}
+.opa_alert_top span {
+  display: block;
+  margin: 15% 0 60px 0;
+}
+.opa_close {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+}
+.opa_close img {
+  width: 30px;
+}
+.opa_hide {
+  display: none;
+}
+.opa_btn {
+  width: calc(100% - 100px);
+  height: 180px;
+  line-height: 180px;
+  text-align: center;
+  font-size: 34px;
+  border: 2px solid #E4E4E4;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  color: #2C2C2C;
+  font-weight: 400;
+  margin: 10px 0;
+}
+.opa_btn.l_row {
+  height: 140px;
+  line-height: 140px;
+  font-size: 28px;
+}
+.opa_btn.l_row2 {
+  height: 100px;
+  line-height: 100px;
+  font-size: 28px;
+}
+
+.opa_btn span {
+  margin: 0px;
+  padding: 0px;
+}
+.opa_btn span {
+  margin: 0px;
+  padding: 0px;
+}
+.opa_amt_wrap {
+  background-color: #F5F5F5;
+  border-radius: 20px;
+  padding: 0px;
+  margin: 0px 30px;
+  overflow: hidden;
+}
+span.amt_left {
+  float: left;
+  font-size: 30px;
+  padding: 0px;
+  margin: 20px 0px 20px 30px;
+  font-weight: 400;
+}
+span.amt {
+  float: right;
+  font-size: 30px;
+  color: #1E64FF;
+  padding: 0px;
+  margin: 20px 0px 20px 0;
+}
+span.amt_right {
+  float: right;
+  color: #2C2C2C;
+  font-size: 30px;
+  padding: 0px;
+  margin: 20px 30px 20px 0;
+}
+span.alert_title {
+  margin: 100px 0px 20px 0px;
+  font-size: 34px;
+}
+p.alert_sub_title {
+  color: #767676;
+  font-size: 26px;
+  margin: 0px 0px 60px;
+}
+.video-player {
+  margin:60px 0px;
+}
+.video-player .video {
+  width: 60%;
+  outline: none;
+  border: none;
+}
+button.opa_close_bot {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  color: #FFFFFF;
+  background-color: #1E64FF;
+  border: 0px;
+  height: 100px;
+  line-height: 100px;
+  font-size: 34px;
+  font-weight: 600;
+}
+.sc2 {
+  text-align: center;
+}
+img.f_btn {
+  display: inline-block;
+  width: 60px;
+  margin: 140px 0 0 0;
+}
+.sc2 .alert_title {
+  display: block;
+  margin: 30px 0 50px 0;
+  padding: 0px;
+  color: #2C2C2C;
+  font-weight: 600;
+}
+.sc3 img.f_btn {
+  display: inline-block;
+  width: 120px;
+  margin: 140px 0 60px 0;
+}
+.sc3 .opa_amt_wrap {
+  background-color: transparent;
+  margin: 0px 0px 20px 0px;
+  padding: 0px;
+}
+.sc3 .opa_amt_wrap .amt {
+  float: none;
+  font-size: 30px;
+  color: #1E64FF;
+  font-weight: 600;
+  margin: 0px;
+  padding: 0px;
+}
+.sc3 .opa_amt_wrap .amt_right {
+  float: none;
+  font-size: 30px;
+  color: #2C2C2C;
+  font-weight: 600;
+  margin: 0px;
+  padding: 0px;
+}
+.sc3 .complete_info {
+  font-size: 26px;
+  line-height: 36px;
+  color: #767676;
 }
 </style>

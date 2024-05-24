@@ -1,9 +1,79 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+import axios from 'axios';
+
+const base_url = "http://127.0.0.1:6444";
+const type1 = "/tPayDaemon/Auth";
+
+const ckDaemon = async (data) => {
+  console.log('a');
+    const url = base_url + type1;
+    return await axios.post(url, data)
+    .then((response) => {
+        //console.log(response.data);
+        return response.data;
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+};
+
+const getTime_YYMMDDHHMMSS = () => {
+  let today = new Date();
+
+  let year = today.getFullYear()
+  let month = ('0' + (today.getMonth() + 1)).slice(-2);
+  let day = ('0' + today.getDate()).slice(-2);
+          
+  let hours = ('0' + today.getHours()).slice(-2);
+  let minutes = ('0' + (today.getMinutes() + 1)).slice(-2);
+  let seconds = ('0' + today.getSeconds()).slice(-2);
+  
+  let time = year + month + day + hours + minutes + seconds;
+  
+  return time.slice(-12);		
+};
+
+let data4 = {
+    TIMEOUT: '02',
+    MSGTYPE: '1010',
+    TID: '1004930001',
+    MSGNO: '000000000001',
+    TRANSTIME: '240524206052',
+    INSTALLMENT: '00',
+    AMOUNT: '000000000',
+    TAX: '000000000',
+    SERVICE: '000000000',
+    CURRENCY: 'KRW',
+    NOTAX: '000000000',
+    SIGNKBN: ' ',
+    CR: String.fromCharCode(0x0d),
+};
+
+const proc = async () => {
+    const ck = await ckDaemon(data4);
+    console.log(ck);
+    return ck;
+}
+
+ipcMain.on('synchronous-message', async (event, arg) => {
+  console.log(arg);
+
+  data4.TRANSTIME = getTime_YYMMDDHHMMSS();
+  data4.AMOUNT = arg.AMOUNT;
+  data4.MSGNO = arg.MSGNO;
+  const rt = await proc();
+  
+  event.returnValue = JSON.stringify(rt);
+  
+});
+
+
+
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -81,3 +151,6 @@ if (isDevelopment) {
     })
   }
 }
+
+
+
